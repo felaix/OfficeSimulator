@@ -8,6 +8,8 @@ public class PlayerProjectUI : MonoBehaviour
 
     public List<ProjectItemUI> ProjectItems = new List<ProjectItemUI>();
 
+    [SerializeField] private Transform _createProjectWindow;
+
     [SerializeField] private Transform _projectContainer;
     [SerializeField] private GameObject _projectPrefab;
 
@@ -18,8 +20,12 @@ public class PlayerProjectUI : MonoBehaviour
 
     private void Start()
     {
-        _projectContainer.gameObject.SetActive(false);
+        ToggleProjectContainer(false);
     }
+
+    public void ToggleProjectContainer(bool active) { _projectContainer.gameObject.SetActive(active); }
+
+    public void ToggleCreateProjectWindow(bool active) { _createProjectWindow.gameObject.SetActive(active); }
 
     public void CreatePlayerProjectUI()
     {

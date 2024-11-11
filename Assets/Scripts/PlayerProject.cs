@@ -27,20 +27,21 @@ public class PlayerProject : MonoBehaviour
 
     private IEnumerator CreateGameCoroutine()
     {
-
         PlayerProjectUI.Instance.CreatePlayerProjectUI();
 
         Debug.Log("Creating game ...");
 
         float time = 0f;
+        int maxBugs = 5;
 
         while (time < _timer)
         {
             float speed = playerStats.Speed;
 
-            if (time < _timer / 3)
+            if (GameBugs < maxBugs && Random.Range(0f, 1f) < 0.1f) // 10% chance per iteration
             {
                 GameBugs++;
+                Debug.Log("A bug appeared! Total bugs: " + GameBugs);
             }
 
             GameDesignPoints += playerStats.Design;

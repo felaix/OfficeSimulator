@@ -18,5 +18,6 @@ MonoBehaviour:
   cost: 650
   upgradeIcon: {fileID: 21300000, guid: 2bd7ec045556fd04e91fd7fd7cc7a0a1, type: 3}
   description: A regular notebook, good for office work.
+  itemObj: {fileID: 8030121451115027930, guid: 29414d6d8d88b524baf0df457882135c, type: 3}
   processingPower: 2
   memory: 2

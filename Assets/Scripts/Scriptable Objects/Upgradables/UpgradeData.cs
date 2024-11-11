@@ -10,6 +10,7 @@ public class UpgradeData : ScriptableObject
     public int cost; // Kosten für das Upgrade
     public Sprite upgradeIcon; // Icon für das Upgrade
     public string description; // Beschreibung des Upgrades
+    public GameObject itemObj;
 
     public virtual void ApplyUpgrade()
     {

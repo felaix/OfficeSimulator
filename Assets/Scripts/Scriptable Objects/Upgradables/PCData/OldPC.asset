@@ -18,5 +18,6 @@ MonoBehaviour:
   cost: 50
   upgradeIcon: {fileID: 21300000, guid: 164a35c916dc8184d86a6f2db49f50ee, type: 3}
   description: a old and used pc, but for a cheap price.
+  itemObj: {fileID: 8030121451115027930, guid: 29414d6d8d88b524baf0df457882135c, type: 3}
   processingPower: 1
   memory: 1

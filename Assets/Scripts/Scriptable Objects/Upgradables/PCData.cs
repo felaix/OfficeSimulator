@@ -4,12 +4,12 @@ using UnityEngine;
 public class PCData : UpgradeData
 {
     [Header("PC Data")]
-    public int processingPower; // Verarbeitungsgeschwindigkeit
-    public int memory; // Arbeitsspeicher
+    public int processingPower;
+    public int memory;
 
     public override void ApplyUpgrade()
     {
-        base.ApplyUpgrade(); // Zuerst die Basisklasse aufrufen
+        base.ApplyUpgrade();
 
 
         // more logic here
