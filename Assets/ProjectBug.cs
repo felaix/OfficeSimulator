@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,9 +11,16 @@ public class ProjectBug : MonoBehaviour
     public TMP_Text _timeTMP;
     public Button _fixButton;
 
+    public Bug bugItem;
+
     private void Start()
     {
-        _fixButton.onClick.AddListener(() => Debug.Log("Fixing Bug"));
+        _fixButton.onClick.AddListener(() => FixBug());
+    }
+
+    private void FixBug()
+    {
+        bugItem.Project.FixBug(bugItem);
     }
 
     private void OnDisable()
@@ -22,7 +30,7 @@ public class ProjectBug : MonoBehaviour
 
     public void InitializeBugUI(Bug bug)
     {
-
+        bugItem = bug;
         _descriptionTMP.text = _bugType.ToString();
 
         switch (_bugType)

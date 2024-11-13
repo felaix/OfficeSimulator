@@ -36,6 +36,20 @@ public class PlayerProject : MonoBehaviour
         return bug;
     }
 
+    public void FixBug(Bug bug)
+    {
+        if (bug != null)
+        {
+            if (Bugs.Contains(bug))
+            {
+                RemoveBug(bug);
+                GameBugs--;
+            }
+        }
+    }
+
+    private void RemoveBug(Bug bug) { Bugs.Remove(bug); }   
+
     private void AddBug(Bug bug) { Bugs.Add(bug); }
 
     private IEnumerator CreateGameCoroutine()

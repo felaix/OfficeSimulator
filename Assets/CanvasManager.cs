@@ -18,8 +18,9 @@ public class CanvasManager : MonoBehaviour
     public GameObject CreateActionBar()
     {
         if (currentActionBar != null) Destroy(currentActionBar);
+        Vector3 mousePos = Input.mousePosition;
 
-        currentActionBar = Instantiate(actionBarUIPrefab, MainCanvas.transform);
+        currentActionBar = Instantiate(actionBarUIPrefab, mousePos, Quaternion.identity, MainCanvas.transform);
         return currentActionBar;
     }
 

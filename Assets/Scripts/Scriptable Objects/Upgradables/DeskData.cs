@@ -4,7 +4,7 @@ using UnityEngine;
 public class DeskData : UpgradeData
 {
     [Header("Desk Data")]
-    public int comfort; // Größe des Arbeitsplatzes
+    public int comfort;
 
     public override void ApplyUpgrade()
     {
