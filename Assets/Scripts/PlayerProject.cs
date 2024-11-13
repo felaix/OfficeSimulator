@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerProject : MonoBehaviour
@@ -13,6 +14,7 @@ public class PlayerProject : MonoBehaviour
     public float GameFamePoints;
 
     public int GameBugs;
+    public List<Bug> Bugs = new List<Bug>();
 
     [Header("Time")]
     public float _timer = 100f;
@@ -24,6 +26,17 @@ public class PlayerProject : MonoBehaviour
         playerStats = PlayerProjectManager.Instance.GetPlayerStats();
         StartCoroutine(CreateGameCoroutine());
     }
+
+    private Bug CreateBug()
+    {
+        Bug bug = new Bug();
+        bug.Project = this;
+        bug.TimeToRepair = 10;
+        bug.Type = BugType.CRITICAL;
+        return bug;
+    }
+
+    private void AddBug(Bug bug) { Bugs.Add(bug); }
 
     private IEnumerator CreateGameCoroutine()
     {
@@ -41,6 +54,7 @@ public class PlayerProject : MonoBehaviour
             if (GameBugs < maxBugs && Random.Range(0f, 1f) < 0.1f) // 10% chance per iteration
             {
                 GameBugs++;
+                AddBug(CreateBug());
                 Debug.Log("A bug appeared! Total bugs: " + GameBugs);
             }
 
@@ -72,4 +86,11 @@ public enum Genre
     Horror,
     Action,
     Sports
+}
+
+public class Bug
+{
+    public BugType Type;
+    public float TimeToRepair;
+    public PlayerProject Project;
 }

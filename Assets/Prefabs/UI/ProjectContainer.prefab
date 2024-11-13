@@ -1399,6 +1399,7 @@ GameObject:
   - component: {fileID: 6896534294032616383}
   - component: {fileID: 2376426635188040464}
   - component: {fileID: 8178228147852358219}
+  - component: {fileID: 98189251547617587}
   m_Layer: 5
   m_Name: ProjectContainer
   m_TagString: Untagged
@@ -1526,6 +1527,19 @@ MonoBehaviour:
   _gameBugsTMP: {fileID: 1456850933503966257}
   _gameRevenueTMP: {fileID: 3504756851203411621}
   ID: 0
+--- !u!114 &98189251547617587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5268460181808369925}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 357f328b101fc3448bfff88eefbd6a89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actions: 0300000002000000
 --- !u!1 &5943465268610694914
 GameObject:
   m_ObjectHideFlags: 0
@@ -2581,10 +2595,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 98189251547617587}
+        m_TargetAssemblyTypeName: ActionBar, Assembly-CSharp
+        m_MethodName: InitializeActionbar
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

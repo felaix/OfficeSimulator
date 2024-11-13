@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,7 +5,6 @@ using UnityEngine.UI;
 public class ProjectBug : MonoBehaviour
 {
     public BugType _bugType;
-    public string _bugDescription;
 
     public TMP_Text _descriptionTMP;
     public TMP_Text _timeTMP;
@@ -15,14 +12,36 @@ public class ProjectBug : MonoBehaviour
 
     private void Start()
     {
-        _descriptionTMP.text = _bugDescription;
-
+        _fixButton.onClick.AddListener(() => Debug.Log("Fixing Bug"));
     }
+
+    private void OnDisable()
+    {
+        Destroy(gameObject);
+    }
+
+    public void InitializeBugUI(Bug bug)
+    {
+
+        _descriptionTMP.text = _bugType.ToString();
+
+        switch (_bugType)
+        {
+            case BugType.CRITICAL:
+                _timeTMP.text = "8h";
+                break;
+            case BugType.BALANCING:
+                _timeTMP.text = "12h";
+                break;
+            default:
+                break;
+        }
+    }
+
 }
 
 public enum BugType
 {
-    critical,
-    medium,
-    low
+    CRITICAL,
+    BALANCING
 }

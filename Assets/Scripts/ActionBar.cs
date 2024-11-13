@@ -7,10 +7,25 @@ public class ActionBar : MonoBehaviour
 
     private void OnMouseDown()
     {
+        InitializeActionbar();
+    }
+
+    public void InitializeActionbar()
+    {
         PlayerProjectUI projectUI = PlayerProjectUI.Instance;
+        PlayerProjectManager manager = PlayerProjectManager.Instance;
         CanvasManager canvas = CanvasManager.Instance;
 
+        int projectID = -1;
+
+        if (TryGetComponent<ProjectItemUI>(out ProjectItemUI project))
+        {
+            projectID = project.ID;
+        }
+
         canvas.CreateActionBar();
+
+        Debug.Log("init action bar");
 
         foreach (var item in actions)
         {
@@ -23,7 +38,8 @@ public class ActionBar : MonoBehaviour
                     canvas.CreateActionButton("Check Reviews").onClick.AddListener(() => projectUI.ToggleProjectContainer(true));
                     break;
                 case PlayerAction.SHOW_BUTTON_FIX_BUGS:
-                    canvas.CreateActionButton("Fix Bugs").onClick.AddListener(() => projectUI.ToggleProjectContainer(true));
+                    PlayerProject targetProject = manager.GetPlayerProjectByID(projectID);
+                    canvas.CreateActionButton("Fix Bugs").onClick.AddListener(() => projectUI.CreateBugWindow(targetProject));
                     break;
                 case PlayerAction.SHOW_BUTTON_NEW_PROJECT:
                     canvas.CreateActionButton("Create new Project").onClick.AddListener(() => projectUI.ToggleCreateProjectWindow(true));

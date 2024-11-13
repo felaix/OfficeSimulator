@@ -109,8 +109,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 357f328b101fc3448bfff88eefbd6a89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionBarUIPrefab: {fileID: 3255821629288068441, guid: 16470b0e4cba30c44a07b88cc27ead81,
-    type: 3}
-  actionBarButtonPrefab: {fileID: 6134433299421184865, guid: 7b8e6cfdae99bf541898866502dea2e3,
-    type: 3}
-  actions: 00000000010000000200000003000000
+  actions: 0000000001000000

@@ -13,6 +13,9 @@ public class PlayerProjectUI : MonoBehaviour
     [SerializeField] private Transform _projectContainer;
     [SerializeField] private GameObject _projectPrefab;
 
+    [SerializeField] private GameObject _bugPrefab;
+    [SerializeField] private Transform _bugContainer;
+
     private void Awake()
     {
         Instance = this;
@@ -26,6 +29,22 @@ public class PlayerProjectUI : MonoBehaviour
     public void ToggleProjectContainer(bool active) { _projectContainer.gameObject.SetActive(active); }
 
     public void ToggleCreateProjectWindow(bool active) { _createProjectWindow.gameObject.SetActive(active); }
+
+
+    public void CreateBugWindow(PlayerProject project)
+    {
+        _bugContainer.gameObject.SetActive(true);
+
+        if (project.GameBugs > 0)
+        {
+            foreach (var bug in project.Bugs)
+            {
+                ProjectBug bugUI = Instantiate(_bugPrefab, _bugContainer).GetComponent<ProjectBug>();
+                bugUI.InitializeBugUI(bug);
+            }
+        }
+
+    }
 
     public void CreatePlayerProjectUI()
     {

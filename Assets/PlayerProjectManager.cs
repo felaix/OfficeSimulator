@@ -37,5 +37,10 @@ public class PlayerProjectManager : MonoBehaviour
         project.GameID = createdProjects.Count - 1;
     }
 
+    public PlayerProject GetPlayerProjectByID(int id)
+    {
+        if (id == -1) { Debug.Log("Error Code -1"); return null; }
+        return createdProjects[id];
+    }
 
 }
