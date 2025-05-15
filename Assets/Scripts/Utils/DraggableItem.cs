@@ -1,36 +1,63 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class DraggableItem : MonoBehaviour
 {
-    public bool isDragging = false;
-    public LayerMask _layer;
+    public LayerMask dropLayer;
+    private Camera mainCamera;
+    private Vector3 dragOffset;
 
-    public void OnMouseDown()
+    private bool isDragging = false;
+    private PlayerInputActions input;
+
+    private void Awake()
     {
-        isDragging = true;
+        input = new PlayerInputActions();
+        input.Enable();
+
+        input.Game.Click.started += OnClickStarted;
+        input.Game.Click.canceled += OnClickCanceled;
     }
 
-    public void OnMouseUp()
+    private void Start()
+    {
+        mainCamera = Camera.main;
+    }
+
+    private void OnDestroy()
+    {
+        input.Disable();
+    }
+
+    private void OnClickStarted(InputAction.CallbackContext context)
+    {
+        Vector2 pointerPos = input.Game.Point.ReadValue<Vector2>();
+        Ray ray = mainCamera.ScreenPointToRay(pointerPos);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f) && hit.transform == transform)
+        {
+            isDragging = true;
+            dragOffset = transform.position - hit.point;
+        }
+    }
+
+
+    private void OnClickCanceled(InputAction.CallbackContext context)
     {
         isDragging = false;
     }
 
     private void Update()
     {
-        if (isDragging)
+        if (!isDragging) return;
+
+        Vector2 pointerPos = input.Game.Point.ReadValue<Vector2>();
+        Ray ray = mainCamera.ScreenPointToRay(pointerPos);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, dropLayer))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            // Check if the ray hits an object in the specified layer
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, _layer))
-            {
-                Vector3 newPosition = hit.point;
-
-                newPosition.y = hit.point.y + 1f; 
-
-                transform.position = newPosition;
-            }
+            Vector3 target = hit.point + Vector3.up + dragOffset;
+            transform.position = Vector3.Lerp(transform.position, target, Time.deltaTime * 15f);
         }
     }
 }

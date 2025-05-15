@@ -33,9 +33,6 @@ public class ShopItem : MonoBehaviour
 
     private void BuyUpgrade()
     {
-
-
-
         if (PlayerInventory.Instance.money >= upgradeData.cost)
         {
             Debug.Log("Bought " + upgradeData.itemName);

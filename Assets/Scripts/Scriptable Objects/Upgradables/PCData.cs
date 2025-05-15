@@ -11,7 +11,6 @@ public class PCData : UpgradeData
     {
         base.ApplyUpgrade();
 
-
         // more logic here
         Debug.Log($"PC upgraded to level {currentLevel} with processing power: {processingPower} and memory: {memory}");
     }
