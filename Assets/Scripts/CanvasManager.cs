@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,12 +10,33 @@ public class CanvasManager : MonoBehaviour
 
     [SerializeField] private GameObject actionBarUIPrefab;
     [SerializeField] private GameObject actionBarButtonPrefab;
+    [SerializeField] private GameObject _ux;
+
+    [SerializeField] private TMP_Text playerMoneyTMP;
+    [SerializeField] private TMP_Text gameClockTMP;
 
     public GameObject MainCanvas;
 
     private GameObject currentActionBar;
 
     public void RemoveActionBar(){ if (currentActionBar != null) Destroy(currentActionBar); }
+
+    public void ToggleUX() { _ux.SetActive(!_ux.gameObject.activeSelf); }
+
+    private void OnEnable()
+    {
+        GameClock.OnNewMonth += UpdateDateTMP;
+    }
+
+    private void UpdateDateTMP(int year, int month)
+    {
+        gameClockTMP.SetText(year.ToString() + "-" + month.ToString());
+    }
+
+    public void UpdatePlayerMoney(int money)
+    {
+        playerMoneyTMP.SetText(money.ToString());
+    }
 
     public GameObject CreateActionBar()
     {

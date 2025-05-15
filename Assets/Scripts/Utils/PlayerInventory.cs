@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
     public static PlayerInventory Instance { get; private set; }
-    public int money = 1000;
+    public int money = 100;
 
     private void Awake()
     {
@@ -19,9 +18,15 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        CanvasManager.Instance.UpdatePlayerMoney(money);
+    }
+
     public void AddMoney(int amount)
     {
         money += amount;
+        CanvasManager.Instance.UpdatePlayerMoney(money);
     }
 
     public void DeductMoney(int amount)
@@ -29,6 +34,7 @@ public class PlayerInventory : MonoBehaviour
         if (money >= amount)
         {
             money -= amount;
+            CanvasManager.Instance.UpdatePlayerMoney(money);
         }
         else
         {
