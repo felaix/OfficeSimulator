@@ -76,8 +76,18 @@ public class ActionBar : MonoBehaviour
                     canvas.CreateActionButton("Check Reviews").onClick.AddListener(() => projectUI.ToggleProjectContainer(true));
                     break;
                 case PlayerAction.SHOW_BUTTON_FIX_BUGS:
-                    PlayerProject targetProject = manager.GetPlayerProjectByID(projectID);
-                    canvas.CreateActionButton("Fix Bugs").onClick.AddListener(() => projectUI.CreateBugWindow(targetProject));
+                    if (manager != null && projectUI != null)
+                    {
+                        PlayerProject targetProject = manager.GetPlayerProjectByID(projectID);
+                        if (targetProject != null)
+                        {
+                            canvas.CreateActionButton("Fix Bugs").onClick.AddListener(() => projectUI.CreateBugWindow(targetProject));
+                        }
+                        else
+                        {
+                            Debug.LogError($"Project with ID {projectID} not found");
+                        }
+                    }
                     break;
                 case PlayerAction.SHOW_BUTTON_NEW_PROJECT:
                     canvas.CreateActionButton("Create new Project").onClick.AddListener(() => projectUI.ToggleCreateProjectWindow(true));

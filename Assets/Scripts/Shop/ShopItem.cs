@@ -36,12 +36,14 @@ public class ShopItem : MonoBehaviour
         if (PlayerInventory.Instance.money >= upgradeData.cost)
         {
             Debug.Log("Bought " + upgradeData.itemName);
+            GameMessageBox.Instance.Show("Successfully bought " + upgradeData.itemName + " for $ " + upgradeData.cost.ToString() + ".", upgradeData.upgradeIcon, false);
             PlayerInventory.Instance.money -= upgradeData.cost;
             Shop.Instance.CreatePackage(upgradeData.itemObj);
         }
         else
         {
             Debug.Log("Not enough money!");
+            GameMessageBox.Instance.ShowErrorNotEnoughMoney();
         }
 
         transform.parent.parent.gameObject.SetActive(false);

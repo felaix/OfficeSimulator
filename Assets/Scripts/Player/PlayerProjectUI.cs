@@ -33,6 +33,19 @@ public class PlayerProjectUI : MonoBehaviour
 
     public void CreateBugWindow(PlayerProject project)
     {
+
+        if (_bugContainer == null || _bugPrefab == null)
+        {
+            Debug.LogError("Bug container or prefab not assigned");
+            return;
+        }
+
+        if (project == null)
+        {
+            Debug.LogError("Project is null");
+            return;
+        }
+
         _bugContainer.gameObject.SetActive(true);
 
         if (project.GameBugs > 0)
