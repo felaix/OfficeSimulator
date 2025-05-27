@@ -33,7 +33,7 @@ public class RentManager : MonoBehaviour
 
         int rent = rentPerMonth[level];
 
-        if (PlayerInventory.Instance.money < rent)
+        if (PlayerInventory.Instance.PlayerStats.Money < rent)
         {
             GameMessageBox.Instance.Show("Not enough Money to rent office room " + level, coinSprite);
             return false;
@@ -42,6 +42,7 @@ public class RentManager : MonoBehaviour
         {
             PlayerInventory.Instance.DeductMoney(rent);
             GameMessageBox.Instance.Show("Sucess! You now rent room " + level, coinSprite, false);
+            DialogueManager.Instance.ContinueDialogue();
 
             currentRoomLevel = level;
             roomUnlocker.UnlockRoom(level);

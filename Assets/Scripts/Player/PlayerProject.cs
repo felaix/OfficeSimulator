@@ -1,105 +1,113 @@
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerProject : MonoBehaviour
 {
-    public string GameName;
-    public int GameID;
-    public Genre GameGenre;
+    private const float MONTHLY_PROGRESS_MULTIPLIER = 2.5f;
+    private const float DEFAULT_BUG_REPAIR_TIME = 10f;
 
-    [Header("Points")]
-    public float GameDesignPoints;
-    public float GameDevPoints;
-    public float GameFamePoints;
+    private PlayerProjectStats playerProjectStats;
+    public PlayerProjectStrategy strategy;
 
-    public int GameBugs;
-    public List<Bug> Bugs = new List<Bug>();
+    [SerializeField] private ProjectItemUI UI;
+    public int ID;
+
+    public List<Bug> Bugs = new();
 
     [Header("Time")]
-    public float _timer = 100f;
+    public float Timer = 100f;
 
     private Stats playerStats;
+    private float progressTime;
+    private bool isCreating = true;
+    private int maxBugs = 5;
 
     private void Start()
     {
+        playerProjectStats = new PlayerProjectStats();
         playerStats = PlayerProjectManager.Instance.GetPlayerStats();
-        StartCoroutine(CreateGameCoroutine());
+        
+        GameClock.OnNewMonth += GameClock_OnNewMonth;
+
+        if (isCreating)
+            Debug.Log($"Creating Project ... {progressTime}");
     }
 
-    private Bug CreateBug()
+    public void Init(int id, PlayerProjectStrategy strategies, Stats playerStats = null, int maxBugs = 5)
     {
-        Bug bug = new Bug();
-        bug.Project = this;
-        bug.TimeToRepair = 10;
-        bug.Type = BugType.CRITICAL;
-        return bug;
+        this.ID = id;
+        this.playerStats = PlayerProjectManager.Instance.GetPlayerStats();
+        this.maxBugs = maxBugs;
+
+        strategy = strategies;
+        playerProjectStats = new PlayerProjectStats();
+    }
+
+    public void UpdatePlayerProjectUI() => PlayerProjectUI.Instance.SetPlayerProjectUIProgress(playerProjectStats, UI, progressTime);
+
+    private void GameClock_OnNewMonth(int year, int month)
+    {
+        if (!isCreating || playerStats == null || playerProjectStats == null || playerProjectStats.Completed) return;
+
+        // Fortschritt
+        progressTime += playerStats.Speed * MONTHLY_PROGRESS_MULTIPLIER;
+        float progress = Mathf.Clamp01(progressTime / Timer);
+
+        UpdatePlayerProjectUI();
+
+        if (progress >= 1f)
+        {
+            FinishPlayerProject();
+            playerProjectStats.Completed = true;
+            isCreating = false;
+        }
+
+        TryAddBug();
+
+        AddAllXP(month);
+    }
+
+    private void TryAddBug()
+    {
+        if (playerProjectStats.Bugs >= maxBugs) return;
+
+        var bug = new Bug { Project = this, TimeToRepair = DEFAULT_BUG_REPAIR_TIME, Type = BugType.CRITICAL };
+        Bugs.Add(bug);
+        playerProjectStats.AddBug();
+    }
+
+    private void AddAllXP(int month)
+    {
+        playerProjectStats.AddXP(playerStats.Design * (month / 4f), design: true);
+        playerProjectStats.AddXP(playerStats.Programming * (month / 6f), dev: true);
+        playerProjectStats.AddXP(playerStats.Corruption * (month / 4f), fame: true);
+    }
+
+    private void FinishPlayerProject()
+    {
+        Debug.Log($"{playerProjectStats.Name} completed. Bugs: {Bugs.Count}, Design Points: {playerProjectStats.DesignXP}");
+        PlayerProjectUI.Instance.ToggleProjectContainer(true);
+        GameMessageBox.Instance.Show($"{playerProjectStats.Name} completed. Remaining Bugs: {Bugs.Count}. Design Points: {playerProjectStats.DesignXP}. Programming Points: {playerProjectStats.DevXP}.");
     }
 
     public void FixBug(Bug bug)
     {
-        if (bug != null)
+        if (bug == null) return;
+
+        if (Bugs.Remove(bug))
         {
-            if (Bugs.Contains(bug))
-            {
-                RemoveBug(bug);
-                GameBugs--;
-            }
+            playerProjectStats.RemoveBug();
         }
-    }
-
-    private void RemoveBug(Bug bug) { Bugs.Remove(bug); }   
-
-    private void AddBug(Bug bug) { Bugs.Add(bug); }
-
-    private IEnumerator CreateGameCoroutine()
-    {
-        PlayerProjectUI.Instance.CreatePlayerProjectUI();
-
-        Debug.Log("Creating game ...");
-
-        float time = 0f;
-        int maxBugs = 5;
-
-        while (time < _timer)
-        {
-            float speed = playerStats.Speed;
-
-            if (GameBugs < maxBugs && Random.Range(0f, 1f) < 0.1f) // 10% chance per iteration
-            {
-                GameBugs++;
-                AddBug(CreateBug());
-                Debug.Log("A bug appeared! Total bugs: " + GameBugs);
-            }
-
-            GameDesignPoints += playerStats.Design;
-            time++;
-
-            PlayerProjectUI.Instance.SetPlayerProjectUIProgress(this, (int)time);
-            Debug.Log("Fortschritt: " + time + "%. Punkte: " + GameDesignPoints);
-            yield return new WaitForSeconds(100f / speed);
-        }
-
-        
-        Debug.Log(GameName + "completed. Bugs: " + GameBugs + ", Design Points: " +  GameDesignPoints);
-
-
-    }
-
-    private IEnumerator PublishGameCoroutine()
-    {
-        Debug.Log("Publishing game ...");
-
-
-        yield return new WaitForSeconds(1f);
     }
 }
 
-public enum Genre
+public enum ProjectType
 {
-    Horror,
-    Action,
-    Sports
+    TrashGame,
+    FakeSocialMedia,
+    FakeOnlineShop,
+    MailScam,
+    None
 }
 
 public class Bug

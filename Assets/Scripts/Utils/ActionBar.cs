@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 
 public class ActionBar : MonoBehaviour
 {
     [SerializeField] private List<PlayerAction> actions = new List<PlayerAction>();
+
     private DraggableItem item;
     private PlayerInputActions input;
     private Camera cam;
@@ -15,13 +15,16 @@ public class ActionBar : MonoBehaviour
     {
         input = new PlayerInputActions();
         //input.Game.Hold.performed += OnHoldPerformed;
-        input.Game.DoublePress.performed += OnDoublePressPerformed;
+
+        input.Game.DoublePress.performed += SpawnActionbar;
+        input.Game.RightClick.performed += SpawnActionbar;
+
         input.Enable();
 
         cam = Camera.main;
     }
 
-    private void OnDoublePressPerformed(InputAction.CallbackContext context)
+    private void SpawnActionbar(InputAction.CallbackContext context)
     {
         Vector2 pointerPos = input.Game.Point.ReadValue<Vector2>();
         Ray ray = cam.ScreenPointToRay(pointerPos);
@@ -48,6 +51,16 @@ public class ActionBar : MonoBehaviour
         item = GetComponent<DraggableItem>();
     }
 
+    public void Sleep()
+    {
+        PlayerInventory.Instance.PlayerStats.ModifySleep(50f, true);
+    }
+
+    public void Relax()
+    {
+        PlayerInventory.Instance.PlayerStats.ModifySleep(12.5f, true);
+    }
+
     public void InitializeActionbar()
     {
         PlayerProjectUI projectUI = PlayerProjectUI.Instance;
@@ -56,7 +69,7 @@ public class ActionBar : MonoBehaviour
 
         int projectID = -1;
 
-        if (TryGetComponent<ProjectItemUI>(out ProjectItemUI project))
+        if (TryGetComponent<PlayerProject>(out PlayerProject project))
         {
             projectID = project.ID;
         }
@@ -92,18 +105,25 @@ public class ActionBar : MonoBehaviour
                 case PlayerAction.SHOW_BUTTON_NEW_PROJECT:
                     canvas.CreateActionButton("Create new Project").onClick.AddListener(() => projectUI.ToggleCreateProjectWindow(true));
                     break;
+                case PlayerAction.SHOW_BUTTON_SLEEP:
+                    canvas.CreateActionButton("Sleep").onClick.AddListener(() => Sleep());
+                    break;
+                case PlayerAction.SHOW_BUTTON_RELAX:
+                    canvas.CreateActionButton("Relax").onClick.AddListener(() => Relax());
+                    break;
+                case PlayerAction.SHOW_BUTTON_COOK:
+                    canvas.CreateActionButton("Cook").onClick.AddListener(() => Cook());
+                    break;
+                case PlayerAction.NONE:
+                    break;
                 default:
                     break;
             }
         }
     }
 
-}
-
-public enum PlayerAction
-{
-    SHOW_BUTTON_PROJECT,
-    SHOW_BUTTON_NEW_PROJECT,
-    SHOW_BUTTON_SOCIAL_MEDIA,
-    SHOW_BUTTON_FIX_BUGS,
+    private void Cook()
+    {
+        throw new NotImplementedException();
+    }
 }

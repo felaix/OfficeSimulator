@@ -1,11 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[DefaultExecutionOrder(0)]
 public class PlayerProjectManager : MonoBehaviour
 {
     public static PlayerProjectManager Instance { get; set; }
 
     public List<PlayerProject> createdProjects = new List<PlayerProject>();
+    public GameObject playerProjectPrefab;
+    public PlayerProjectStrategy selectedStrategy;
 
     private Stats _playerStats;
 
@@ -18,24 +21,65 @@ public class PlayerProjectManager : MonoBehaviour
     {
         if (_playerStats == null)
         {
-            _playerStats = GameObject.FindGameObjectWithTag("Player").GetComponent<Stats>();
+            _playerStats = PlayerInventory.Instance.PlayerStats;
         }
     }
 
     public Stats GetPlayerStats() { return _playerStats; }
 
-    public void CreateNewPlayerProject()
+    public void UpdatePlayerProjectStrategy(PlayerProjectStrategy selection)
     {
-        GameObject projectObject = new GameObject("Generated Project Object");
-        PlayerProject newProject = projectObject.AddComponent<PlayerProject>();
-        AddNewProject(newProject);
+        selectedStrategy = selection;
     }
 
-    private void AddNewProject(PlayerProject project)
+    public void UpdatePlayerProjectType(ProjectType type)
     {
-        createdProjects.Add(project);
-        project.GameID = createdProjects.Count - 1;
+        selectedStrategy.Type = type;
+        Debug.Log("strategy: " +  type);    
     }
+
+    public void UpdatePlayerProjectMarketingStrategy(MarketingStrategy marketingStrategy)
+    {
+        selectedStrategy.Marketing = marketingStrategy;
+        Debug.Log("strategy: " + marketingStrategy);
+
+    }
+
+    public void UpdatePlayerProjectEmployeePolicy(EmployeePolicy policy)
+    {
+        selectedStrategy.Policy = policy;
+    }
+
+    public void CreateNewPlayerProject(Transform ui)
+    {
+        if (ui == null) return;
+
+        if (selectedStrategy.Type == ProjectType.None)
+        {
+            Debug.LogError("Error: Player selected no project type");
+            return;
+        }
+
+        if (selectedStrategy.Marketing == MarketingStrategy.None)
+        {
+            Debug.Log("Warning: player selected no marketing strategy");
+        }
+
+        if (selectedStrategy.Policy == EmployeePolicy.None)
+        {
+            Debug.Log("Warning: player selected no employee policy");
+        }
+
+        Debug.Log($"Creating new Project in {ui}..");
+
+        GameObject projectObject = Instantiate(playerProjectPrefab, ui);
+        PlayerProject project = projectObject.GetComponent<PlayerProject>();
+        project.Init(createdProjects.Count, selectedStrategy, _playerStats, Random.Range(2, 5));
+
+        AddNewProject(project);
+    }
+
+    private void AddNewProject(PlayerProject project) => createdProjects.Add(project);
 
     public PlayerProject GetPlayerProjectByID(int id)
     {

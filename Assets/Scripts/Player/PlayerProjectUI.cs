@@ -1,12 +1,8 @@
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public class PlayerProjectUI : MonoBehaviour
 {
     public static PlayerProjectUI Instance { get; private set; }
-
-    public List<ProjectItemUI> ProjectItems = new List<ProjectItemUI>();
 
     [SerializeField] private Transform _createProjectWindow;
 
@@ -15,6 +11,10 @@ public class PlayerProjectUI : MonoBehaviour
 
     [SerializeField] private GameObject _bugPrefab;
     [SerializeField] private Transform _bugContainer;
+
+    private GameObject selectedProjectTypeIcon;
+    private GameObject selectedMarketingTypeIcon;
+    private GameObject selectedPolicyTypeIcon;
 
     private void Awake()
     {
@@ -26,14 +26,30 @@ public class PlayerProjectUI : MonoBehaviour
         ToggleProjectContainer(false);
     }
 
+    public void SelectProjectType(GameObject selectedIcon)
+    {
+        if (selectedProjectTypeIcon != null) selectedProjectTypeIcon.SetActive(false);
+        selectedProjectTypeIcon = selectedIcon;
+    }
+
+    public void SelectMarketingType(GameObject selectedIcon)
+    {
+        if (selectedMarketingTypeIcon != null) selectedMarketingTypeIcon.SetActive(false);
+        selectedMarketingTypeIcon = selectedIcon;
+    }
+
+    public void SelectPolicyType(GameObject selectedIcon)
+    {
+        if (selectedPolicyTypeIcon != null) selectedPolicyTypeIcon.SetActive(false);
+        selectedPolicyTypeIcon = selectedIcon;
+    }
+
     public void ToggleProjectContainer(bool active) { _projectContainer.gameObject.SetActive(active); }
 
     public void ToggleCreateProjectWindow(bool active) { _createProjectWindow.gameObject.SetActive(active); }
 
-
     public void CreateBugWindow(PlayerProject project)
     {
-
         if (_bugContainer == null || _bugPrefab == null)
         {
             Debug.LogError("Bug container or prefab not assigned");
@@ -48,7 +64,7 @@ public class PlayerProjectUI : MonoBehaviour
 
         _bugContainer.gameObject.SetActive(true);
 
-        if (project.GameBugs > 0)
+        if (project.Bugs.Count >= 1)
         {
             foreach (var bug in project.Bugs)
             {
@@ -59,39 +75,24 @@ public class PlayerProjectUI : MonoBehaviour
 
     }
 
-    public void CreatePlayerProjectUI()
+    //public void CreatePlayerProject() => PlayerProjectManager.Instance.CreateNewPlayerProject(_projectContainer);
+
+    public void SetPlayerProjectUIProgress(PlayerProjectStats playerProjectStats, ProjectItemUI ui, float progress)
     {
-        ProjectItemUI project = Instantiate(_projectPrefab, _projectContainer).GetComponent<ProjectItemUI>();
-        ProjectItems.Add(project);
-        project.ID = ProjectItems.Count - 1;
-    }
+        if (playerProjectStats == null || ui == null) return;
 
-    public void SetPlayerProjectUIProgress(PlayerProject project, int progress = 0)
-    {
-        _projectContainer.gameObject.SetActive(true);
-        
-        int id = project.GameID;
-        ProjectItemUI ui = GetProjectItemByID(id);
-
-
-        if (progress >= 99)
+        if (progress >= 101)
         {
             ui.SetProgress("completed");
         }
         else
         {
-            ui.SetProgress(progress + "%");
-
+            ui.SetProgress(progress.ToString() + "%");
         }
 
-        ui.SetDesign(project.GameDesignPoints.ToString());
-        ui.SetBugs(project.GameBugs.ToString());
-        ui.SetProgramming(project.GameDevPoints.ToString());
+        ui.SetDesign(playerProjectStats.DesignXP.ToString());
+        ui.SetBugs(playerProjectStats.Bugs.ToString());
+        ui.SetProgramming(playerProjectStats.DevXP.ToString());
 
-    }
-
-    private ProjectItemUI GetProjectItemByID(int id)
-    {
-        return ProjectItems[id];
     }
 }

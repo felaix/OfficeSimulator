@@ -10,8 +10,10 @@ public class GameClock : MonoBehaviour
 
     public float monthDuration = 60f;
 
-    private int currentYear = 0;
+    private int currentYear = 1;
     private int currentMonth = 0;
+
+    public float TotalTime { get; private set; }
 
     private void Awake()
     {
@@ -23,6 +25,19 @@ public class GameClock : MonoBehaviour
         Instance = this;
     }
 
+    private void Update()
+    {
+        float delta = Time.deltaTime;
+
+        TotalTime += delta;
+        timePassed += delta;
+
+        if (timePassed >= monthDuration)
+        {
+            timePassed = 0f;
+            AdvanceMonth();
+        }
+    }
     private void AdvanceMonth()
     {
         currentMonth++;
@@ -33,15 +48,5 @@ public class GameClock : MonoBehaviour
         }
 
         OnNewMonth?.Invoke(currentYear, currentMonth);
-    }
-
-    private void Update()
-    {
-        timePassed += Time.deltaTime;
-        if (timePassed >= monthDuration)
-        {
-            timePassed = 0f;
-            AdvanceMonth();
-        }
     }
 }

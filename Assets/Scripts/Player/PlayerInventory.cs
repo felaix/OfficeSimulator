@@ -1,9 +1,11 @@
 using UnityEngine;
 
+[DefaultExecutionOrder(-1)]
 public class PlayerInventory : MonoBehaviour
 {
     public static PlayerInventory Instance { get; private set; }
-    public int money = 100;
+    public Stats PlayerStats;
+
 
     private void Awake()
     {
@@ -18,27 +20,20 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
-    private void OnEnable()
+    private void Start()
     {
-        CanvasManager.Instance.UpdatePlayerMoney(money);
+        CanvasManager.Instance.UpdatePlayerMoney(Color.white, PlayerStats.Money, PlayerStats.Money);
     }
 
     public void AddMoney(int amount)
     {
-        money += amount;
-        CanvasManager.Instance.UpdatePlayerMoney(money);
+        PlayerStats.ModifyMoney(amount, true);
+        CanvasManager.Instance.UpdatePlayerMoney(Color.green, PlayerStats.Money, amount);
     }
 
     public void DeductMoney(int amount)
     {
-        if (money >= amount)
-        {
-            money -= amount;
-            CanvasManager.Instance.UpdatePlayerMoney(money);
-        }
-        else
-        {
-            Debug.Log("Nicht genug Geld!");
-        }
+        PlayerStats.ModifyMoney(amount, false);
+        CanvasManager.Instance.UpdatePlayerMoney(Color.red, PlayerStats.Money, amount);
     }
 }

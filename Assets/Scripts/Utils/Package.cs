@@ -14,7 +14,8 @@ public class Package : MonoBehaviour
         if (item != null)
         {
             GameObject instance = Instantiate(item, transform.position, Quaternion.identity);
-        }
+            DialogueManager.Instance.CreateDialogue($"You bought {item.name}. Nice");
+        } 
 
         Destroy(gameObject);
 
