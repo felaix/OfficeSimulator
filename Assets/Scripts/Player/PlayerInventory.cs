@@ -36,4 +36,13 @@ public class PlayerInventory : MonoBehaviour
         PlayerStats.ModifyMoney(amount, false);
         CanvasManager.Instance.UpdatePlayerMoney(Color.red, PlayerStats.Money, amount);
     }
+
+    public void IncreasePlayerXPByProject(PlayerProjectStats projectStats)
+    {
+        PlayerStats.IncreaseDesignSkill(projectStats.DesignXP);
+        PlayerStats.IncreaseSpeed(.1f);
+        PlayerStats.IncreaseProgrammingSkill(projectStats.DevXP);
+        PlayerStats.ModifyMoney(projectStats.Revenue);
+        PlayerStats.ModifySleep(-1f);
+    }
 }

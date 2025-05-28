@@ -14,7 +14,6 @@ public class ActionBar : MonoBehaviour
     private void Awake()
     {
         input = new PlayerInputActions();
-        //input.Game.Hold.performed += OnHoldPerformed;
 
         input.Game.DoublePress.performed += SpawnActionbar;
         input.Game.RightClick.performed += SpawnActionbar;

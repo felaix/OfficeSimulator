@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+[DefaultExecutionOrder(0)]
 public class GameMessageBox : MonoBehaviour
 {
     public static GameMessageBox Instance { get; private set; }

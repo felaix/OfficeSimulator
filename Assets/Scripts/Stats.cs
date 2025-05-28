@@ -1,5 +1,4 @@
 
-using System.Diagnostics;
 
 [System.Serializable]
 public class Stats

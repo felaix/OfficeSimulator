@@ -20,6 +20,11 @@ public class CreateProjectButton : MonoBehaviour
         btn.onClick.AddListener(() => SelectItem());
     }
 
+    private void OnDestroy()
+    {
+        btn.onClick.RemoveAllListeners();
+    }
+
     private void Start()
     {
         selectIcon.SetActive(false); // Toggle Selection at the beginning
@@ -31,23 +36,33 @@ public class CreateProjectButton : MonoBehaviour
 
     public void SetType()
     {
+
+        // Select Project Type
         if (isProjectType)
         {
             PlayerProjectManager.Instance.UpdatePlayerProjectType(strategies.Type);
             PlayerProjectUI.Instance.SelectProjectType(selectIcon);
+            return;
         }
 
+        // Select Marketing Type
         if (isMarketingType)
         {
             PlayerProjectManager.Instance.UpdatePlayerProjectMarketingStrategy(strategies.Marketing);
             PlayerProjectUI.Instance.SelectMarketingType(selectIcon);
+            return;
         }
 
+
+        // Select Employee Policy
         if (isEmployeeType)
         {
             PlayerProjectManager.Instance.UpdatePlayerProjectEmployeePolicy(strategies.Policy);
-            PlayerProjectUI.Instance.SelectMarketingType(selectIcon);
+            PlayerProjectUI.Instance.SelectPolicyType(selectIcon);
+            return;
         }
+
+        // Set Description
     }
 
     private void SelectItem() 

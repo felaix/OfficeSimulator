@@ -1,16 +1,22 @@
+using TMPro;
 using UnityEngine;
 
 public class PlayerProjectUI : MonoBehaviour
 {
     public static PlayerProjectUI Instance { get; private set; }
 
+    [Header("Essential")]
     [SerializeField] private Transform _createProjectWindow;
-
     [SerializeField] private Transform _projectContainer;
     [SerializeField] private GameObject _projectPrefab;
 
+    [Header("Bugs")]
     [SerializeField] private GameObject _bugPrefab;
     [SerializeField] private Transform _bugContainer;
+
+    [Header("Description & Title")]
+    [SerializeField] private TMP_Text _descriptionTMP;
+    [SerializeField] private TMP_InputField _textInputField;
 
     private GameObject selectedProjectTypeIcon;
     private GameObject selectedMarketingTypeIcon;
@@ -24,6 +30,18 @@ public class PlayerProjectUI : MonoBehaviour
     private void Start()
     {
         ToggleProjectContainer(false);
+    }
+
+    private void OnDisable()
+    {
+        ClearIcons();
+    }
+
+    public void ClearIcons()
+    {
+        selectedProjectTypeIcon = null;
+        selectedMarketingTypeIcon = null;
+        selectedPolicyTypeIcon = null;
     }
 
     public void SelectProjectType(GameObject selectedIcon)
@@ -93,6 +111,7 @@ public class PlayerProjectUI : MonoBehaviour
         ui.SetDesign(playerProjectStats.DesignXP.ToString());
         ui.SetBugs(playerProjectStats.Bugs.ToString());
         ui.SetProgramming(playerProjectStats.DevXP.ToString());
-
+        ui.SetName(playerProjectStats.Name);
+        ui.SetDescription(playerProjectStats.Description);
     }
 }

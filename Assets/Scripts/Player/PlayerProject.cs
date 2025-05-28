@@ -10,6 +10,7 @@ public class PlayerProject : MonoBehaviour
     public PlayerProjectStrategy strategy;
 
     [SerializeField] private ProjectItemUI UI;
+    [SerializeField] private Sprite _iconCompleted;
     public int ID;
 
     public List<Bug> Bugs = new();
@@ -20,13 +21,15 @@ public class PlayerProject : MonoBehaviour
     private Stats playerStats;
     private float progressTime;
     private bool isCreating = true;
+    private bool isToggled = false;
     private int maxBugs = 5;
 
     private void Start()
     {
-        playerProjectStats = new PlayerProjectStats();
-        playerStats = PlayerProjectManager.Instance.GetPlayerStats();
-        
+        playerProjectStats ??= new PlayerProjectStats(strategy);
+        playerStats ??= PlayerProjectManager.Instance.GetPlayerStats();
+
+        UI.ToggleButton.onClick.AddListener(() => TogglePlayerProjectStats());
         GameClock.OnNewMonth += GameClock_OnNewMonth;
 
         if (isCreating)
@@ -39,11 +42,18 @@ public class PlayerProject : MonoBehaviour
         this.playerStats = PlayerProjectManager.Instance.GetPlayerStats();
         this.maxBugs = maxBugs;
 
+        strategy.Clear();
         strategy = strategies;
-        playerProjectStats = new PlayerProjectStats();
+        playerProjectStats = new PlayerProjectStats(strategy);
     }
 
     public void UpdatePlayerProjectUI() => PlayerProjectUI.Instance.SetPlayerProjectUIProgress(playerProjectStats, UI, progressTime);
+
+    public void TogglePlayerProjectStats()
+    {
+        UI.projectRoot.SetActive(!isToggled);
+        isToggled = !isToggled;
+    }
 
     private void GameClock_OnNewMonth(int year, int month)
     {
@@ -83,11 +93,18 @@ public class PlayerProject : MonoBehaviour
         playerProjectStats.AddXP(playerStats.Corruption * (month / 4f), fame: true);
     }
 
+    private void OnConfirmProjectCompleted()
+    {
+        float playerCorruption = PlayerInventory.Instance.PlayerStats.Corruption += .25f;
+        playerProjectStats.AddXP(playerCorruption, revenue: true);
+        PlayerInventory.Instance.IncreasePlayerXPByProject(playerProjectStats);
+        //PlayerProjectUI.Instance.ToggleProjectContainer(true);
+    }
+
     private void FinishPlayerProject()
     {
         Debug.Log($"{playerProjectStats.Name} completed. Bugs: {Bugs.Count}, Design Points: {playerProjectStats.DesignXP}");
-        PlayerProjectUI.Instance.ToggleProjectContainer(true);
-        GameMessageBox.Instance.Show($"{playerProjectStats.Name} completed. Remaining Bugs: {Bugs.Count}. Design Points: {playerProjectStats.DesignXP}. Programming Points: {playerProjectStats.DevXP}.");
+        GameMessageBox.Instance.Show($"{playerProjectStats.Name} completed!", _iconCompleted, false, OnConfirmProjectCompleted);
     }
 
     public void FixBug(Bug bug)

@@ -35,14 +35,11 @@ public class PlayerProjectManager : MonoBehaviour
     public void UpdatePlayerProjectType(ProjectType type)
     {
         selectedStrategy.Type = type;
-        Debug.Log("strategy: " +  type);    
     }
 
     public void UpdatePlayerProjectMarketingStrategy(MarketingStrategy marketingStrategy)
     {
         selectedStrategy.Marketing = marketingStrategy;
-        Debug.Log("strategy: " + marketingStrategy);
-
     }
 
     public void UpdatePlayerProjectEmployeePolicy(EmployeePolicy policy)
@@ -62,12 +59,14 @@ public class PlayerProjectManager : MonoBehaviour
 
         if (selectedStrategy.Marketing == MarketingStrategy.None)
         {
-            Debug.Log("Warning: player selected no marketing strategy");
+            Debug.LogError("Warning: player selected no marketing strategy");
+            return;
         }
 
         if (selectedStrategy.Policy == EmployeePolicy.None)
         {
-            Debug.Log("Warning: player selected no employee policy");
+            Debug.LogError("Warning: player selected no employee policy");
+            return;
         }
 
         Debug.Log($"Creating new Project in {ui}..");
@@ -77,6 +76,7 @@ public class PlayerProjectManager : MonoBehaviour
         project.Init(createdProjects.Count, selectedStrategy, _playerStats, Random.Range(2, 5));
 
         AddNewProject(project);
+        selectedStrategy.Clear();
     }
 
     private void AddNewProject(PlayerProject project) => createdProjects.Add(project);
