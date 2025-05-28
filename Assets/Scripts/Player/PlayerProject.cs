@@ -41,6 +41,8 @@ public class PlayerProject : MonoBehaviour
         this.ID = id;
         this.playerStats = PlayerProjectManager.Instance.GetPlayerStats();
         this.maxBugs = maxBugs;
+        this.UI.SetTitle(strategies.ProjectTitle);
+        this.UI.SetDescription(strategies.GenerateDescription());
 
         strategy.Clear();
         strategy = strategies;

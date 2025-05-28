@@ -48,6 +48,7 @@ public class CreateProjectButton : MonoBehaviour
         // Select Marketing Type
         if (isMarketingType)
         {
+            MarketingStrategy marketing = strategies.Marketing;
             PlayerProjectManager.Instance.UpdatePlayerProjectMarketingStrategy(strategies.Marketing);
             PlayerProjectUI.Instance.SelectMarketingType(selectIcon);
             return;
@@ -57,12 +58,18 @@ public class CreateProjectButton : MonoBehaviour
         // Select Employee Policy
         if (isEmployeeType)
         {
-            PlayerProjectManager.Instance.UpdatePlayerProjectEmployeePolicy(strategies.Policy);
-            PlayerProjectUI.Instance.SelectPolicyType(selectIcon);
+            EmployeePolicy policy = strategies.Policy;
+            PlayerProjectManager.Instance.UpdatePlayerProjectEmployeePolicy(policy);
+            PlayerProjectUI.Instance.SelectPolicyType(selectIcon, policy);
             return;
         }
 
         // Set Description
+
+
+
+
+        // Set Title
     }
 
     private void SelectItem() 

@@ -22,6 +22,8 @@ public class PlayerProjectUI : MonoBehaviour
     private GameObject selectedMarketingTypeIcon;
     private GameObject selectedPolicyTypeIcon;
 
+    private PlayerProjectStrategy selectedPlayerStrategy;
+
     private void Awake()
     {
         Instance = this;
@@ -34,14 +36,28 @@ public class PlayerProjectUI : MonoBehaviour
 
     private void OnDisable()
     {
-        ClearIcons();
+        Clear();
     }
 
-    public void ClearIcons()
+    public void Clear()
     {
         selectedProjectTypeIcon = null;
         selectedMarketingTypeIcon = null;
         selectedPolicyTypeIcon = null;
+        selectedPlayerStrategy = null;
+    }
+
+    public void UpdateAllSelectedUIByStrategy(PlayerProjectStrategy strategy)
+    {
+        SelectMarketingType(selectedMarketingTypeIcon);
+        SelectPolicyType(selectedPolicyTypeIcon, strategy.Policy);
+        SelectProjectType(selectedProjectTypeIcon);
+    }
+
+    public void UpdateSelectedPlayerProjectTitle(PlayerProjectStrategy strategy)
+    {
+        strategy.ProjectTitle = _textInputField.text;
+        selectedPlayerStrategy = strategy;
     }
 
     public void SelectProjectType(GameObject selectedIcon)
@@ -56,10 +72,25 @@ public class PlayerProjectUI : MonoBehaviour
         selectedMarketingTypeIcon = selectedIcon;
     }
 
-    public void SelectPolicyType(GameObject selectedIcon)
+    public void SelectPolicyType(GameObject selectedIcon, EmployeePolicy policy)
     {
         if (selectedPolicyTypeIcon != null) selectedPolicyTypeIcon.SetActive(false);
         selectedPolicyTypeIcon = selectedIcon;
+
+        switch (policy)
+        {
+            case EmployeePolicy.None:
+                _descriptionTMP.text = "Select Employee Policy";
+                return;
+            case EmployeePolicy.CrunchTime:
+                _descriptionTMP.text = "Crunch Time: Employees must work day and night.";
+                return;
+            case EmployeePolicy.UnpaidInterns:
+                _descriptionTMP.text = "Unpaid Interns: Who needs to pay rent anyway?";
+                return;
+            default:
+                _descriptionTMP.text = policy.ToString(); break;
+        }
     }
 
     public void ToggleProjectContainer(bool active) { _projectContainer.gameObject.SetActive(active); }
