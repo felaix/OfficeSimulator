@@ -1,81 +1,137 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Button))]
 public class CreateProjectButton : MonoBehaviour
 {
+    public enum ButtonCategory { ProjectType, Marketing, Policy }
+
+    [Header("Einstellungen")]
+    [SerializeField] private ButtonCategory category;
+
+    [Tooltip("Icon, das beim Auswählen dieses Buttons aufleuchtet")]
     [SerializeField] private GameObject selectIcon;
 
-    public PlayerProjectStrategy strategies;
+    [Tooltip("Wert, der gesetzt wird, je nachdem welche Kategorie gewählt ist")]
+    [SerializeField] private ProjectType projectType = ProjectType.None;
+    [SerializeField] private MarketingStrategy marketingStrategy = MarketingStrategy.None;
+    [SerializeField] private EmployeePolicy employeePolicy = EmployeePolicy.None;
 
-    private Button btn;
+    [Header("Animationseinstellungen")]
+    [SerializeField] private float iconScaleOnSelect = 1.2f;
+    [SerializeField] private float animationDuration = 0.15f;
 
-    private bool isProjectType;
-    private bool isMarketingType;
-    private bool isEmployeeType;
+    private Button _button;
+    private PlayerProjectUI _ui;
+    private PlayerProjectManager _manager;
+    private Vector3 _originalIconScale;
+
+    private void Awake()
+    {
+        _button = GetComponent<Button>();
+        if (selectIcon != null)
+        {
+            selectIcon.SetActive(false);
+            _originalIconScale = selectIcon.transform.localScale;
+        }
+    }
 
     private void OnEnable()
     {
-        btn = GetComponent<Button>();
-        btn.onClick.AddListener(() => SelectItem());
+        // Instanzen hier holen, falls sie beim Awake noch nicht bereit waren
+        _ui = PlayerProjectUI.Instance;
+        _manager = PlayerProjectManager.Instance;
+
+        _button.onClick.AddListener(OnClick_Select);
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
-        btn.onClick.RemoveAllListeners();
+        _button.onClick.RemoveListener(OnClick_Select);
     }
 
-    private void Start()
+    private void OnClick_Select()
     {
-        selectIcon.SetActive(false); // Toggle Selection at the beginning
-
-        if (strategies.Type == ProjectType.None) { isProjectType = false; } else isProjectType = true;
-        if (strategies.Marketing == MarketingStrategy.None) { isMarketingType = false; } else { isMarketingType = true; }
-        if (strategies.Policy == EmployeePolicy.None) { isEmployeeType = false; } else { isEmployeeType = true; }
-    }
-
-    public void SetType()
-    {
-
-        // Select Project Type
-        if (isProjectType)
+        // 1) UI-Instanz prüfen
+        if (_ui == null)
         {
-            PlayerProjectManager.Instance.UpdatePlayerProjectType(strategies.Type);
-            PlayerProjectUI.Instance.SelectProjectType(selectIcon);
+            Debug.LogError($"[{nameof(CreateProjectButton)}] PlayerProjectUI.Instance ist null! Stelle sicher, dass das UI-Objekt in der Szene existiert und dieses Script erst danach aktiviert wird.");
             return;
         }
 
-        // Select Marketing Type
-        if (isMarketingType)
+        // 2) Manager-Instanz prüfen
+        if (_manager == null)
         {
-            MarketingStrategy marketing = strategies.Marketing;
-            PlayerProjectManager.Instance.UpdatePlayerProjectMarketingStrategy(strategies.Marketing);
-            PlayerProjectUI.Instance.SelectMarketingType(selectIcon);
+            Debug.LogError($"[{nameof(CreateProjectButton)}] PlayerProjectManager.Instance ist null! Stelle sicher, dass der Manager in der Szene aktiv ist.");
             return;
         }
 
-
-        // Select Employee Policy
-        if (isEmployeeType)
+        // 3) Icon-Effekt
+        if (selectIcon != null)
         {
-            EmployeePolicy policy = strategies.Policy;
-            PlayerProjectManager.Instance.UpdatePlayerProjectEmployeePolicy(policy);
-            PlayerProjectUI.Instance.SelectPolicyType(selectIcon, policy);
-            return;
+            selectIcon.SetActive(true);
+            StopAllCoroutines();
+            StartCoroutine(AnimateIconPulse());
         }
 
-        // Set Description
+        // 4) Strategy anlegen, falls noch nicht vorhanden
+        if (_manager.selectedStrategy == null)
+            _manager.selectedStrategy = new PlayerProjectStrategy();
 
+        // 5) Kategorie setzen
+        switch (category)
+        {
+            case ButtonCategory.ProjectType:
+                if (projectType == ProjectType.None) return;
+                _manager.selectedStrategy.Type = projectType;
+                _ui.SelectProjectTypeIcon(selectIcon);
+                _ui.UpdateProjectTypeDescription(projectType);
+                break;
 
+            case ButtonCategory.Marketing:
+                if (marketingStrategy == MarketingStrategy.None) return;
+                _manager.selectedStrategy.Marketing = marketingStrategy;
+                _ui.SelectMarketingIcon(selectIcon);
+                _ui.UpdateMarketingDescription(marketingStrategy);
+                break;
 
-
-        // Set Title
+            case ButtonCategory.Policy:
+                if (employeePolicy == EmployeePolicy.None) return;
+                _manager.selectedStrategy.Policy = employeePolicy;
+                _ui.SelectPolicyIcon(selectIcon);
+                _ui.UpdatePolicyDescription(employeePolicy);
+                break;
+        }
     }
 
-    private void SelectItem() 
+    private IEnumerator AnimateIconPulse()
     {
-        selectIcon.SetActive(true);
-        SetType();
-    }
+        if (selectIcon == null) yield break;
 
+        var iconTransform = selectIcon.transform;
+        Vector3 targetScale = _originalIconScale * iconScaleOnSelect;
+        float elapsed = 0f;
+
+        // Hochskalieren
+        while (elapsed < animationDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / animationDuration);
+            iconTransform.localScale = Vector3.Lerp(_originalIconScale, targetScale, t);
+            yield return null;
+        }
+
+        // Zurück skalieren
+        elapsed = 0f;
+        while (elapsed < animationDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / animationDuration);
+            iconTransform.localScale = Vector3.Lerp(targetScale, _originalIconScale, t);
+            yield return null;
+        }
+
+        iconTransform.localScale = _originalIconScale;
+    }
 }

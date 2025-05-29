@@ -5,144 +5,172 @@ public class PlayerProjectUI : MonoBehaviour
 {
     public static PlayerProjectUI Instance { get; private set; }
 
-    [Header("Essential")]
-    [SerializeField] private Transform _createProjectWindow;
-    [SerializeField] private Transform _projectContainer;
-    [SerializeField] private GameObject _projectPrefab;
+    [Header("Fenster & Container")]
+    [SerializeField] private Transform createProjectWindow;
+    [SerializeField] private Transform projectContainer;
+    [SerializeField] private TMP_Text descriptionTMP;
+    [SerializeField] private TMP_InputField titleInput;
 
-    [Header("Bugs")]
-    [SerializeField] private GameObject _bugPrefab;
-    [SerializeField] private Transform _bugContainer;
-
-    [Header("Description & Title")]
-    [SerializeField] private TMP_Text _descriptionTMP;
-    [SerializeField] private TMP_InputField _textInputField;
-
-    private GameObject selectedProjectTypeIcon;
-    private GameObject selectedMarketingTypeIcon;
-    private GameObject selectedPolicyTypeIcon;
-
-    private PlayerProjectStrategy selectedPlayerStrategy;
+    private GameObject _selectedProjectTypeIcon;
+    private GameObject _selectedMarketingIcon;
+    private GameObject _selectedPolicyIcon;
 
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
     }
 
     private void Start()
     {
-        ToggleProjectContainer(false);
+        createProjectWindow.gameObject.SetActive(false);
+        projectContainer.gameObject.SetActive(false);
     }
 
-    private void OnDisable()
+    public void ClearAllSelections()
     {
-        Clear();
+        if (_selectedProjectTypeIcon != null) _selectedProjectTypeIcon.SetActive(false);
+        if (_selectedMarketingIcon != null) _selectedMarketingIcon.SetActive(false);
+        if (_selectedPolicyIcon != null) _selectedPolicyIcon.SetActive(false);
+
+        _selectedProjectTypeIcon = null;
+        _selectedMarketingIcon = null;
+        _selectedPolicyIcon = null;
+
+        descriptionTMP.text = "";
+        titleInput.text = ""; // Titelfeld ebenfalls zurücksetzen
     }
 
-    public void Clear()
+    public void UpdateFullDescription(string newDesc)
     {
-        selectedProjectTypeIcon = null;
-        selectedMarketingTypeIcon = null;
-        selectedPolicyTypeIcon = null;
-        selectedPlayerStrategy = null;
+        descriptionTMP.text = newDesc;
     }
 
-    public void UpdateAllSelectedUIByStrategy(PlayerProjectStrategy strategy)
+    // Live-Updates: siehe vorherige Version
+    public void UpdateProjectTypeDescription(ProjectType type)
     {
-        SelectMarketingType(selectedMarketingTypeIcon);
-        SelectPolicyType(selectedPolicyTypeIcon, strategy.Policy);
-        SelectProjectType(selectedProjectTypeIcon);
+        switch (type)
+        {
+            case ProjectType.TrashGame:
+                descriptionTMP.text = "Trash Game: Schnelles Spiel mit fragwürdiger Qualität.";
+                break;
+            case ProjectType.FakeSocialMedia:
+                descriptionTMP.text = "Fake Social Media: Sammle Nutzerdaten unter falscher Flagge.";
+                break;
+            case ProjectType.FakeOnlineShop:
+                descriptionTMP.text = "Fake Online Shop: Täusche Kunden mit nicht existierenden Produkten.";
+                break;
+            case ProjectType.MailScam:
+                descriptionTMP.text = "Mail Scam: Erstelle Phishing-Mails und betrüge ahnungslose Nutzer.";
+                break;
+            default:
+                descriptionTMP.text = "Wähle zuerst einen Projekttyp.";
+                break;
+        }
     }
 
-    public void UpdateSelectedPlayerProjectTitle(PlayerProjectStrategy strategy)
+    public void UpdateMarketingDescription(MarketingStrategy marketing)
     {
-        strategy.ProjectTitle = _textInputField.text;
-        selectedPlayerStrategy = strategy;
+        switch (marketing)
+        {
+            case MarketingStrategy.BlockchainIntegration:
+                descriptionTMP.text = "Blockchain Integration: Täusche Innovation mit leerem Buzzword-Hype.";
+                break;
+            case MarketingStrategy.NFT:
+                descriptionTMP.text = "NFT: Verkaufe nutzlose Pixel als Sammlerstücke.";
+                break;
+            case MarketingStrategy.Pay2Win:
+                descriptionTMP.text = "Pay2Win: Zahle, um im Spiel zu gewinnen.";
+                break;
+            case MarketingStrategy.DataHarvesting:
+                descriptionTMP.text = "Data Harvesting: Verkaufe Nutzerdaten weiter.";
+                break;
+            case MarketingStrategy.ReferralPyramidSystem:
+                descriptionTMP.text = "Referral Pyramid System: Locke Nutzer mit Versprechen von hohen Gewinnen.";
+                break;
+            case MarketingStrategy.FakeReviews:
+                descriptionTMP.text = "Fake Reviews: Bestich Influencer für glattgebügelte Bewertungen.";
+                break;
+            default:
+                descriptionTMP.text = "Wähle zuerst eine Marketing-Strategie.";
+                break;
+        }
     }
 
-    public void SelectProjectType(GameObject selectedIcon)
+    public void UpdatePolicyDescription(EmployeePolicy policy)
     {
-        if (selectedProjectTypeIcon != null) selectedProjectTypeIcon.SetActive(false);
-        selectedProjectTypeIcon = selectedIcon;
-    }
-
-    public void SelectMarketingType(GameObject selectedIcon)
-    {
-        if (selectedMarketingTypeIcon != null) selectedMarketingTypeIcon.SetActive(false);
-        selectedMarketingTypeIcon = selectedIcon;
-    }
-
-    public void SelectPolicyType(GameObject selectedIcon, EmployeePolicy policy)
-    {
-        if (selectedPolicyTypeIcon != null) selectedPolicyTypeIcon.SetActive(false);
-        selectedPolicyTypeIcon = selectedIcon;
-
         switch (policy)
         {
-            case EmployeePolicy.None:
-                _descriptionTMP.text = "Select Employee Policy";
-                return;
-            case EmployeePolicy.CrunchTime:
-                _descriptionTMP.text = "Crunch Time: Employees must work day and night.";
-                return;
+            case EmployeePolicy.CheapFreelancer:
+                descriptionTMP.text = "Cheap Freelancer: Leih dir Billigarbeitskräfte aus aller Welt.";
+                break;
             case EmployeePolicy.UnpaidInterns:
-                _descriptionTMP.text = "Unpaid Interns: Who needs to pay rent anyway?";
-                return;
+                descriptionTMP.text = "Unpaid Interns: Niemand zahlt mehr – Praktikanten schuften gratis.";
+                break;
+            case EmployeePolicy.CrunchTime:
+                descriptionTMP.text = "Crunch Time: Team muss Tag und Nacht durcharbeiten.";
+                break;
+            case EmployeePolicy.FakeWellnessProgram:
+                descriptionTMP.text = "Fake Wellness Program: Stelle Gym-Sessions auf, aber keiner darf hingehen.";
+                break;
+            case EmployeePolicy.CultureOfFear:
+                descriptionTMP.text = "Culture of Fear: Bedrohungsszenarien, damit niemand kündigt.";
+                break;
+            case EmployeePolicy.PyramidReferrals:
+                descriptionTMP.text = "Pyramid Referrals: Zahl den Leuten, die neue Leute rekrutieren.";
+                break;
             default:
-                _descriptionTMP.text = policy.ToString(); break;
+                descriptionTMP.text = "Wähle zuerst eine Mitarbeiter-Policy.";
+                break;
         }
     }
 
-    public void ToggleProjectContainer(bool active) { _projectContainer.gameObject.SetActive(active); }
-
-    public void ToggleCreateProjectWindow(bool active) { _createProjectWindow.gameObject.SetActive(active); }
-
-    public void CreateBugWindow(PlayerProject project)
+    public void SelectProjectTypeIcon(GameObject icon)
     {
-        if (_bugContainer == null || _bugPrefab == null)
-        {
-            Debug.LogError("Bug container or prefab not assigned");
-            return;
-        }
+        if (_selectedProjectTypeIcon != null)
+            _selectedProjectTypeIcon.SetActive(false);
 
-        if (project == null)
-        {
-            Debug.LogError("Project is null");
-            return;
-        }
-
-        _bugContainer.gameObject.SetActive(true);
-
-        if (project.Bugs.Count >= 1)
-        {
-            foreach (var bug in project.Bugs)
-            {
-                ProjectBug bugUI = Instantiate(_bugPrefab, _bugContainer).GetComponent<ProjectBug>();
-                bugUI.InitializeBugUI(bug);
-            }
-        }
-
+        _selectedProjectTypeIcon = icon;
+        icon?.SetActive(true);
     }
 
-    //public void CreatePlayerProject() => PlayerProjectManager.Instance.CreateNewPlayerProject(_projectContainer);
-
-    public void SetPlayerProjectUIProgress(PlayerProjectStats playerProjectStats, ProjectItemUI ui, float progress)
+    public void SelectMarketingIcon(GameObject icon)
     {
-        if (playerProjectStats == null || ui == null) return;
+        if (_selectedMarketingIcon != null)
+            _selectedMarketingIcon.SetActive(false);
 
-        if (progress >= 101)
-        {
-            ui.SetProgress("completed");
-        }
-        else
-        {
-            ui.SetProgress(progress.ToString() + "%");
-        }
+        _selectedMarketingIcon = icon;
+        icon?.SetActive(true);
+    }
 
-        ui.SetDesign(playerProjectStats.DesignXP.ToString());
-        ui.SetBugs(playerProjectStats.Bugs.ToString());
-        ui.SetProgramming(playerProjectStats.DevXP.ToString());
-        ui.SetName(playerProjectStats.Name);
-        ui.SetDescription(playerProjectStats.Description);
+    public void SelectPolicyIcon(GameObject icon)
+    {
+        if (_selectedPolicyIcon != null)
+            _selectedPolicyIcon.SetActive(false);
+
+        _selectedPolicyIcon = icon;
+        icon?.SetActive(true);
+    }
+
+    public void ToggleProjectList(bool isVisible)
+    {
+        projectContainer.gameObject.SetActive(isVisible);
+    }
+
+    public void ToggleCreateWindow(bool isVisible)
+    {
+        createProjectWindow.gameObject.SetActive(isVisible);
+    }
+
+    /// <summary>
+    /// Getter, um den aktuell im InputField eingegebenen Titel abzurufen.
+    /// </summary>
+    public string GetEnteredTitle()
+    {
+        return titleInput.text.Trim();
     }
 }

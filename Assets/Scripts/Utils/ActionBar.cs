@@ -5,124 +5,128 @@ using UnityEngine.InputSystem;
 
 public class ActionBar : MonoBehaviour
 {
-    [SerializeField] private List<PlayerAction> actions = new List<PlayerAction>();
+    [SerializeField] private List<PlayerAction> actions = new();
+    [SerializeField] private GameObject bugPrefab;         // Bug-Prefab zuweisen
+    [SerializeField] private Transform bugContainer;       // Bug-Container zuweisen
 
-    private DraggableItem item;
     private PlayerInputActions input;
-    private Camera cam;
+    private Camera mainCam;
+    private DraggableItem draggableItem;
 
     private void Awake()
     {
         input = new PlayerInputActions();
-
-        input.Game.DoublePress.performed += SpawnActionbar;
-        input.Game.RightClick.performed += SpawnActionbar;
-
+        input.Game.DoublePress.performed += OnSpawnRequested;
+        input.Game.RightClick.performed += OnSpawnRequested;
         input.Enable();
 
-        cam = Camera.main;
-    }
-
-    private void SpawnActionbar(InputAction.CallbackContext context)
-    {
-        Vector2 pointerPos = input.Game.Point.ReadValue<Vector2>();
-        Ray ray = cam.ScreenPointToRay(pointerPos);
-
-        Debug.DrawRay(ray.origin, ray.direction * 100f, Color.cyan, 1f);
-
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-            if (hit.transform == transform)
-            {
-                InitializeActionbar();
-            }
-        }
+        mainCam = Camera.main;
+        draggableItem = GetComponent<DraggableItem>();
     }
 
     private void OnDestroy()
     {
-        //input.Game.Hold.performed -= OnHoldPerformed;
+        input.Game.DoublePress.performed -= OnSpawnRequested;
+        input.Game.RightClick.performed -= OnSpawnRequested;
         input.Disable();
     }
 
-    private void Start()
+    private void OnSpawnRequested(InputAction.CallbackContext ctx)
     {
-        item = GetComponent<DraggableItem>();
+        Vector2 screenPos = input.Game.Point.ReadValue<Vector2>();
+        Ray ray = mainCam.ScreenPointToRay(screenPos);
+
+        if (!Physics.Raycast(ray, out RaycastHit hit) || hit.transform != transform)
+            return;
+
+        ShowActions();
     }
 
-    public void Sleep()
+    private void ShowActions()
     {
-        PlayerInventory.Instance.PlayerStats.ModifySleep(50f, true);
-    }
+        var canvas = CanvasManager.Instance;
+        var projectUI = PlayerProjectUI.Instance;
+        var projectManager = PlayerProjectManager.Instance;
 
-    public void Relax()
-    {
-        PlayerInventory.Instance.PlayerStats.ModifySleep(12.5f, true);
-    }
-
-    public void InitializeActionbar()
-    {
-        PlayerProjectUI projectUI = PlayerProjectUI.Instance;
-        PlayerProjectManager manager = PlayerProjectManager.Instance;
-        CanvasManager canvas = CanvasManager.Instance;
-
-        int projectID = -1;
-
-        if (TryGetComponent<PlayerProject>(out PlayerProject project))
+        if (canvas == null || projectUI == null || projectManager == null)
         {
-            projectID = project.ID;
+            Debug.LogError("ActionBar: Missing CanvasManager, PlayerProjectUI or PlayerProjectManager instance.");
+            return;
         }
 
+        // Wenn dieses Objekt ein PlayerProject ist, holen wir uns die ID
+        int projectID = TryGetComponent<PlayerProject>(out var proj) ? proj.ID : -1;
         canvas.CreateActionBar();
 
-        Debug.Log("init action bar");
-
-        foreach (var item in actions)
+        foreach (var action in actions)
         {
-            switch (item)
+            switch (action)
             {
                 case PlayerAction.SHOW_BUTTON_PROJECT:
-                    canvas.CreateActionButton("Show Projects").onClick.AddListener(() => projectUI.ToggleProjectContainer(true));
+                    CreateButton(canvas, "Show Projects", () => projectUI.ToggleProjectList(true));
                     break;
+
                 case PlayerAction.SHOW_BUTTON_SOCIAL_MEDIA:
-                    canvas.CreateActionButton("Check Reviews").onClick.AddListener(() => projectUI.ToggleProjectContainer(true));
+                    CreateButton(canvas, "Check Reviews", () => projectUI.ToggleProjectList(true));
                     break;
+
                 case PlayerAction.SHOW_BUTTON_FIX_BUGS:
-                    if (manager != null && projectUI != null)
+                    if (projectID < 0)
                     {
-                        PlayerProject targetProject = manager.GetPlayerProjectByID(projectID);
-                        if (targetProject != null)
+                        Debug.LogError("Kein Projekt hier zum Bugfixen.");
+                        break;
+                    }
+                    CreateButton(canvas, "Fix Bugs", () =>
+                    {
+                        var p = projectManager.GetPlayerProjectByID(projectID);
+                        if (p != null)
                         {
-                            canvas.CreateActionButton("Fix Bugs").onClick.AddListener(() => projectUI.CreateBugWindow(targetProject));
+                            //projectUI.ShowBugs(p, bugPrefab, bugContainer);
                         }
                         else
                         {
-                            Debug.LogError($"Project with ID {projectID} not found");
+                            Debug.LogError($"Projekt {projectID} nicht gefunden.");
                         }
-                    }
+                    });
                     break;
+
                 case PlayerAction.SHOW_BUTTON_NEW_PROJECT:
-                    canvas.CreateActionButton("Create new Project").onClick.AddListener(() => projectUI.ToggleCreateProjectWindow(true));
+                    CreateButton(canvas, "Create New Project", () => projectUI.ToggleCreateWindow(true));
                     break;
+
                 case PlayerAction.SHOW_BUTTON_SLEEP:
-                    canvas.CreateActionButton("Sleep").onClick.AddListener(() => Sleep());
+                    CreateButton(canvas, "Sleep", () =>
+                        PlayerInventory.Instance.PlayerStats.ModifySleep(50f, true)
+                    );
                     break;
+
                 case PlayerAction.SHOW_BUTTON_RELAX:
-                    canvas.CreateActionButton("Relax").onClick.AddListener(() => Relax());
+                    CreateButton(canvas, "Relax", () =>
+                        PlayerInventory.Instance.PlayerStats.ModifySleep(12.5f, true)
+                    );
                     break;
+
                 case PlayerAction.SHOW_BUTTON_COOK:
-                    canvas.CreateActionButton("Cook").onClick.AddListener(() => Cook());
+                    CreateButton(canvas, "Cook", () => Cook());
                     break;
+
                 case PlayerAction.NONE:
-                    break;
                 default:
                     break;
             }
         }
     }
 
+    private void CreateButton(CanvasManager canvas, string label, Action onClick)
+    {
+        var btn = canvas.CreateActionButton(label);
+        if (btn != null)
+            btn.onClick.AddListener(() => onClick());
+    }
+
     private void Cook()
     {
-        throw new NotImplementedException();
+        // Falls in Zukunft Implementierung nötig ist
+        Debug.LogWarning("Cook() noch nicht implementiert.");
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿// PlayerProject.cs
 using UnityEngine;
 
 public class PlayerProject : MonoBehaviour
@@ -6,117 +6,131 @@ public class PlayerProject : MonoBehaviour
     private const float MONTHLY_PROGRESS_MULTIPLIER = 2.5f;
     private const float DEFAULT_BUG_REPAIR_TIME = 10f;
 
-    private PlayerProjectStats playerProjectStats;
-    public PlayerProjectStrategy strategy;
-
+    [Header("UI & Icon")]
     [SerializeField] private ProjectItemUI UI;
-    [SerializeField] private Sprite _iconCompleted;
-    public int ID;
+    [SerializeField] private Sprite iconCompleted;
 
-    public List<Bug> Bugs = new();
+    [HideInInspector] public int ID;
+    [HideInInspector] public PlayerProjectStrategy Strategy;
+    [HideInInspector] public PlayerProjectStats Stats;
 
-    [Header("Time")]
-    public float Timer = 100f;
+    [HideInInspector] public float MaxTime;
+    [HideInInspector] public bool IsCreating = true;
 
-    private Stats playerStats;
-    private float progressTime;
-    private bool isCreating = true;
-    private bool isToggled = false;
-    private int maxBugs = 5;
+    private Stats _playerStats;
+    private float _elapsedTime;
+    private bool _isToggled;
+    private int _maxBugs;
+    private readonly System.Collections.Generic.List<Bug> _bugs = new();
 
-    private void Start()
+    // Events unregistern
+    private void OnDestroy()
     {
-        playerProjectStats ??= new PlayerProjectStats(strategy);
-        playerStats ??= PlayerProjectManager.Instance.GetPlayerStats();
-
-        UI.ToggleButton.onClick.AddListener(() => TogglePlayerProjectStats());
-        GameClock.OnNewMonth += GameClock_OnNewMonth;
-
-        if (isCreating)
-            Debug.Log($"Creating Project ... {progressTime}");
+        GameClock.OnNewMonth -= OnNewMonth;
+        if (UI?.ToggleButton != null)
+            UI.ToggleButton.onClick.RemoveListener(ToggleUI);
     }
 
-    public void Init(int id, PlayerProjectStrategy strategies, Stats playerStats = null, int maxBugs = 5)
+    public void Initialize(int id, PlayerProjectStrategy strategy, Stats playerStats, int maxBugs = 5)
     {
-        this.ID = id;
-        this.playerStats = PlayerProjectManager.Instance.GetPlayerStats();
-        this.maxBugs = maxBugs;
-        this.UI.SetTitle(strategies.ProjectTitle);
-        this.UI.SetDescription(strategies.GenerateDescription());
+        ID = id;
+        Strategy = strategy;
+        _playerStats = playerStats;
+        _maxBugs = maxBugs;
+        MaxTime = Random.Range(50f, 100f); // zum Beispiel
 
-        strategy.Clear();
-        strategy = strategies;
-        playerProjectStats = new PlayerProjectStats(strategy);
+        // Stats-Objekt aufbauen
+        Stats = new PlayerProjectStats(Strategy);
+        UI.SetTitle(Strategy.ProjectTitle);
+        UI.SetDescription(Strategy.GeneratedDescription);
+
+        // Event-Listener
+        UI.ToggleButton.onClick.AddListener(ToggleUI);
+        GameClock.OnNewMonth += OnNewMonth;
     }
 
-    public void UpdatePlayerProjectUI() => PlayerProjectUI.Instance.SetPlayerProjectUIProgress(playerProjectStats, UI, progressTime);
-
-    public void TogglePlayerProjectStats()
+    private void ToggleUI()
     {
-        UI.projectRoot.SetActive(!isToggled);
-        isToggled = !isToggled;
-    }
-
-    private void GameClock_OnNewMonth(int year, int month)
-    {
-        if (!isCreating || playerStats == null || playerProjectStats == null || playerProjectStats.Completed) return;
-
-        // Fortschritt
-        progressTime += playerStats.Speed * MONTHLY_PROGRESS_MULTIPLIER;
-        float progress = Mathf.Clamp01(progressTime / Timer);
-
-        UpdatePlayerProjectUI();
-
-        if (progress >= 1f)
+        if (UI?.projectRoot != null)
         {
-            FinishPlayerProject();
-            playerProjectStats.Completed = true;
-            isCreating = false;
+            _isToggled = !_isToggled;
+            UI.projectRoot.SetActive(_isToggled);
+        }
+    }
+
+    private void OnNewMonth(int year, int month)
+    {
+        if (!IsCreating || _playerStats == null || Stats.Completed)
+            return;
+
+        // Projekt-Fortschritt
+        _elapsedTime += _playerStats.Speed * MONTHLY_PROGRESS_MULTIPLIER;
+        float progressNormalized = Mathf.Clamp01(_elapsedTime / MaxTime);
+        UpdateUI(progressNormalized);
+
+        if (progressNormalized >= 1f)
+        {
+            IsCreating = false;
+            Stats.Completed = true;
+            FinishProject();
         }
 
         TryAddBug();
+        AwardMonthlyXP(month);
+    }
 
-        AddAllXP(month);
+    private void UpdateUI(float normalizedProgress)
+    {
+        if (UI == null) return;
+        float percent = normalizedProgress * 100f;
+        UI.SetProgress(percent >= 100f ? "completed" : $"{percent:0}%");
+        UI.SetDesign(Stats.DesignXP.ToString());
+        UI.SetBugs(Stats.Bugs.ToString());
+        UI.SetProgramming(Stats.DevXP.ToString());
+        UI.SetName(Stats.Name);
+        UI.SetDescription(Stats.Description);
     }
 
     private void TryAddBug()
     {
-        if (playerProjectStats.Bugs >= maxBugs) return;
+        if (Stats.Bugs >= _maxBugs) return;
 
         var bug = new Bug { Project = this, TimeToRepair = DEFAULT_BUG_REPAIR_TIME, Type = BugType.CRITICAL };
-        Bugs.Add(bug);
-        playerProjectStats.AddBug();
+        _bugs.Add(bug);
+        Stats.AddBug();
     }
 
-    private void AddAllXP(int month)
+    private void AwardMonthlyXP(int month)
     {
-        playerProjectStats.AddXP(playerStats.Design * (month / 4f), design: true);
-        playerProjectStats.AddXP(playerStats.Programming * (month / 6f), dev: true);
-        playerProjectStats.AddXP(playerStats.Corruption * (month / 4f), fame: true);
+        Stats.AddXP(_playerStats.Design * (month / 4f), design: true);
+        Stats.AddXP(_playerStats.Programming * (month / 6f), dev: true);
+        Stats.AddXP(_playerStats.Corruption * (month / 4f), fame: true);
     }
 
-    private void OnConfirmProjectCompleted()
+    private void FinishProject()
     {
-        float playerCorruption = PlayerInventory.Instance.PlayerStats.Corruption += .25f;
-        playerProjectStats.AddXP(playerCorruption, revenue: true);
-        PlayerInventory.Instance.IncreasePlayerXPByProject(playerProjectStats);
-        //PlayerProjectUI.Instance.ToggleProjectContainer(true);
+        Debug.Log($"Projekt \"{Stats.Name}\" fertig. Bugs: {_bugs.Count}, DesignXP: {Stats.DesignXP}");
+        GameMessageBox.Instance.Show(
+            $"{Stats.Name} abgeschlossen!",
+            iconCompleted,
+            false,
+            OnConfirmComplete
+        );
     }
 
-    private void FinishPlayerProject()
+    private void OnConfirmComplete()
     {
-        Debug.Log($"{playerProjectStats.Name} completed. Bugs: {Bugs.Count}, Design Points: {playerProjectStats.DesignXP}");
-        GameMessageBox.Instance.Show($"{playerProjectStats.Name} completed!", _iconCompleted, false, OnConfirmProjectCompleted);
+        // Wenn PlayerCorruption erhöht wird, direkt an Inventory weitergeben
+        float newCorruption = PlayerInventory.Instance.PlayerStats.Corruption + 0.25f;
+        PlayerInventory.Instance.PlayerStats.Corruption = newCorruption;
+        Stats.AddXP(newCorruption, revenue: true);
+        PlayerInventory.Instance.IncreasePlayerXPByProject(Stats);
     }
 
     public void FixBug(Bug bug)
     {
-        if (bug == null) return;
-
-        if (Bugs.Remove(bug))
-        {
-            playerProjectStats.RemoveBug();
-        }
+        if (bug == null || !_bugs.Remove(bug)) return;
+        Stats.RemoveBug();
     }
 }
 
