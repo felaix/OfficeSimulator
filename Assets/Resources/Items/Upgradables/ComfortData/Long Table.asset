@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d576427597cc6b14d95d054145646835, type: 3}
+  m_Name: Long Table
+  m_EditorClassIdentifier: 
+  itemName: Long Table
+  currentLevel: 0
+  maxLevel: 0
+  cost: 100
+  upgradeIcon: {fileID: 21300000, guid: 34ee00f35f1bb3e44a4ed4f6be16ce10, type: 3}
+  description: Long Table
+  itemObj: {fileID: 6699138205156371157, guid: e530909dfb1139b43b9f3cc8fca72c29, type: 3}
+  comfort: 1

@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class PlayerStatsUI : MonoBehaviour
 {
@@ -11,33 +12,45 @@ public class PlayerStatsUI : MonoBehaviour
     [SerializeField] private PlayerStatsUIItem corruptionUI;
 
     private Stats playerStats;
+    private float animationDuration = 0.5f;
 
     private void OnEnable()
     {
         playerStats = PlayerInventory.Instance.PlayerStats;
 
-        if (playerStats != null) UpdateStats();
+        if (playerStats != null)
+        {
+            playerStats.OnStatsChanged += UpdateStats; // Subscribe
+            UpdateStats(); // Initial update
+        }
     }
+
+    private void OnDisable()
+    {
+        if (playerStats != null)
+            playerStats.OnStatsChanged -= UpdateStats; // Unsubscribe
+    }
+
 
     public void UpdateStats()
     {
         Debug.Log("Updating playerstats...");
 
-        speedUI.tmp.text = playerStats.Speed.ToString();
-        designUI.tmp.text = playerStats.Design.ToString();
-        devUI.tmp.text = playerStats.Programming.ToString();
-        hungerUI.tmp.text = playerStats.Hunger.ToString();
-
-        speedUI.slider.value = playerStats.Speed;
-        designUI.slider.value = playerStats.Design;
-        devUI.slider.value = playerStats.Programming;
-        hungerUI.slider.value = playerStats.Hunger;
-
-        float corruptionXP = (playerStats.Speed + playerStats.Design + playerStats.Programming - playerStats.Hunger);
-        corruptionUI.tmp.text = corruptionXP.ToString();
-        corruptionUI.slider.value = corruptionXP;
+        AnimateStat(speedUI, playerStats.Speed);
+        AnimateStat(designUI, playerStats.Design);
+        AnimateStat(devUI, playerStats.Programming);
+        AnimateStat(hungerUI, playerStats.Hunger);
+        AnimateStat(corruptionUI, playerStats.Corruption);
     }
 
+    private void AnimateStat(PlayerStatsUIItem uiItem, float newValue)
+    {
+        uiItem.slider.DOValue(newValue, animationDuration).SetEase(Ease.OutQuad);
+        DOTween.To(() => float.Parse(uiItem.tmp.text),
+                   x => uiItem.tmp.text = Mathf.RoundToInt(x).ToString(),
+                   newValue,
+                   animationDuration);
+    }
 }
 
 [System.Serializable]

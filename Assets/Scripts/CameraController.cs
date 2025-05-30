@@ -122,9 +122,10 @@ public class CameraController : MonoBehaviour
         targetPosition.x = Mathf.Clamp(targetPosition.x, panLimitX.x, panLimitX.y);
         targetPosition.z = Mathf.Clamp(targetPosition.z, panLimitZ.x, panLimitZ.y);
 
-        transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref panVelocity, smoothTime);
-        targetPanOffset = transform.position - target.position;
+        transform.position = targetPosition;
     }
+
+
 
     private void SmoothZoom()
     {
@@ -140,21 +141,23 @@ public class CameraController : MonoBehaviour
                 Vector3 forward = Vector3.ProjectOnPlane(cam.transform.forward, Vector3.up).normalized;
                 Vector3 right = cam.transform.right;
 
-                // Changed panSpeed to moveSpeed here
                 Vector3 moveDir = (right * moveInput.x + forward * moveInput.y) * moveSpeed;
                 targetPanOffset += moveDir;
-                SmoothPan();
             }
 
             if (isRotating)
                 SmoothRotate();
 
             if (isPanning)
-                SmoothPan();
+            {
+                // Pan-Eingabe verändert targetPanOffset bereits
+            }
 
+            SmoothPan(); // Immer aufrufen
             SmoothZoom();
 
             yield return null;
         }
     }
+
 }

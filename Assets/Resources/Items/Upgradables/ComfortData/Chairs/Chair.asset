@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d576427597cc6b14d95d054145646835, type: 3}
+  m_Name: Chair
+  m_EditorClassIdentifier: 
+  itemName: Chair 1
+  currentLevel: 0
+  maxLevel: 0
+  cost: 65
+  upgradeIcon: {fileID: 21300000, guid: b5ba6db267d603548ae3e0e33fa7113e, type: 3}
+  description: 'Office Chair, comfort: 1'
+  itemObj: {fileID: 6926551535120115429, guid: 9f33749d8561e8a45bc18c5f5bf6e40a, type: 3}
+  comfort: 1

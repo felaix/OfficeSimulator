@@ -80,6 +80,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""NextSlide"",
+                    ""type"": ""Button"",
+                    ""id"": ""b31f052b-784e-4f6a-9206-4552af21137a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -234,6 +243,39 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""ToggleInfo"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c6004fd8-6f51-4895-a3db-62228eac8979"",
+                    ""path"": ""<Touchscreen>/Press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""NextSlide"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4ed6e645-a419-498e-8206-94e542a96533"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""NextSlide"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""145c160a-4583-4a31-88f9-2fffc42dd3b5"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""NextSlide"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1072,6 +1114,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Game_DoublePress = m_Game.FindAction("DoublePress", throwIfNotFound: true);
         m_Game_RightClick = m_Game.FindAction("RightClick", throwIfNotFound: true);
         m_Game_ToggleInfo = m_Game.FindAction("ToggleInfo", throwIfNotFound: true);
+        m_Game_NextSlide = m_Game.FindAction("NextSlide", throwIfNotFound: true);
         // Camera
         m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
         m_Camera_Rotate = m_Camera.FindAction("Rotate", throwIfNotFound: true);
@@ -1158,6 +1201,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Game_DoublePress;
     private readonly InputAction m_Game_RightClick;
     private readonly InputAction m_Game_ToggleInfo;
+    private readonly InputAction m_Game_NextSlide;
     public struct GameActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -1168,6 +1212,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @DoublePress => m_Wrapper.m_Game_DoublePress;
         public InputAction @RightClick => m_Wrapper.m_Game_RightClick;
         public InputAction @ToggleInfo => m_Wrapper.m_Game_ToggleInfo;
+        public InputAction @NextSlide => m_Wrapper.m_Game_NextSlide;
         public InputActionMap Get() { return m_Wrapper.m_Game; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1195,6 +1240,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ToggleInfo.started += instance.OnToggleInfo;
             @ToggleInfo.performed += instance.OnToggleInfo;
             @ToggleInfo.canceled += instance.OnToggleInfo;
+            @NextSlide.started += instance.OnNextSlide;
+            @NextSlide.performed += instance.OnNextSlide;
+            @NextSlide.canceled += instance.OnNextSlide;
         }
 
         private void UnregisterCallbacks(IGameActions instance)
@@ -1217,6 +1265,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ToggleInfo.started -= instance.OnToggleInfo;
             @ToggleInfo.performed -= instance.OnToggleInfo;
             @ToggleInfo.canceled -= instance.OnToggleInfo;
+            @NextSlide.started -= instance.OnNextSlide;
+            @NextSlide.performed -= instance.OnNextSlide;
+            @NextSlide.canceled -= instance.OnNextSlide;
         }
 
         public void RemoveCallbacks(IGameActions instance)
@@ -1438,6 +1489,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnDoublePress(InputAction.CallbackContext context);
         void OnRightClick(InputAction.CallbackContext context);
         void OnToggleInfo(InputAction.CallbackContext context);
+        void OnNextSlide(InputAction.CallbackContext context);
     }
     public interface ICameraActions
     {

@@ -102,7 +102,8 @@ MonoBehaviour:
   dropLayer:
     serializedVersion: 2
     m_Bits: 512
-  outlineMaterial: {fileID: 0}
+  outlineMaterial: {fileID: -7674923503234155378, guid: 5594f3303ccb9ba41a9768841891a760,
+    type: 3}
 --- !u!114 &4163985196355735146
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -123,16 +123,16 @@ public class PlayerProjectStrategy
         switch (Type)
         {
             case ProjectType.TrashGame:
-                sb.Append("Trash Game: Ein lieblos produziertes Game mit minimalem Aufwand.");
+                sb.Append("Trash Game: Slap together a low-effort game and dump it on the store.");
                 break;
             case ProjectType.FakeSocialMedia:
-                sb.Append("Fake Social Media: Sammle und verkaufe Nutzerdaten hinter falschem Versprechen.");
+                sb.Append("Fake Social Media: Promise $1.000.0000 in 24 hours by buying your e-book.");
                 break;
             case ProjectType.FakeOnlineShop:
-                sb.Append("Fake Online Shop: Täusche Kunden mit nicht existierenden Produkten.");
+                sb.Append("Fake Online Shop: Advertise hot deals on items you never intend to ship. Refunds? What's that?");
                 break;
             case ProjectType.MailScam:
-                sb.Append("Mail Scam: Versende betrügerische E-Mails, um Geld abzugreifen.");
+                sb.Append("Mail Scam: Send out mass scam mails. Pose as a bank, or tech support. Anything to get their card numbers.");
                 break;
         }
 
@@ -141,27 +141,27 @@ public class PlayerProjectStrategy
         {
             case MarketingStrategy.BlockchainIntegration:
                 if (sb.Length > 0) sb.Append(" ");
-                sb.Append("Blockchain Integration: Leere Buzzwords, um Investoren zu ködern.");
+                sb.Append("Blockchain Buzzwords: Slap some buzzwords on anything and watch the investors drool.");
                 break;
             case MarketingStrategy.NFT:
                 if (sb.Length > 0) sb.Append(" ");
-                sb.Append("NFT: Verkaufe wertlose Pixelbilder als vermeintliche Sammlerstücke.");
+                sb.Append("NFT: Sell GPT-made JPEGs as exclusive assets. Convince people they own something real.");
                 break;
             case MarketingStrategy.Pay2Win:
                 if (sb.Length > 0) sb.Append(" ");
-                sb.Append("Pay2Win: Spieler müssen zahlen, um im Spiel voranzukommen.");
+                sb.Append("Pay2Win: Lock basic gameplay behind microtransactions.");
                 break;
             case MarketingStrategy.DataHarvesting:
                 if (sb.Length > 0) sb.Append(" ");
-                sb.Append("Data Harvesting: Sammle Nutzerdaten, um sie gewinnbringend weiterzuverkaufen.");
+                sb.Append("Data Harvesting: Track every move, click, and breath. Sell to whoever pays best.");
                 break;
             case MarketingStrategy.ReferralPyramidSystem:
                 if (sb.Length > 0) sb.Append(" ");
-                sb.Append("Referral Pyramid System: Lock Kunden mit dem Versprechen hoher Gewinne.");
+                sb.Append("Referral Scam: Users pay to bring in more users who pay to bring in more users. Totally not a pyramid scheme.");
                 break;
             case MarketingStrategy.FakeReviews:
                 if (sb.Length > 0) sb.Append(" ");
-                sb.Append("Fake Reviews: Bestich Influencer, um glänzende Bewertungen zu simulieren.");
+                sb.Append("Fake Reviews: Pay bots to create fake reviews. Bury the truth.");
                 break;
         }
 
@@ -178,19 +178,21 @@ public class PlayerProjectStrategy
                 break;
             case EmployeePolicy.CrunchTime:
                 if (sb.Length > 0) sb.Append(" ");
-                sb.Append("Crunch Time: Unterdrücke Work-Life-Balance für maximale Effizienz.");
+                sb.Append("You proudly declare: 'We’re like a family' - then force your team into 80-hour weeks.");
+                sb.Append("This boosts productivity temporarily, but your team is slowly breaking. Mental health? Who cares.");
+                sb.Append("Eventually, people burn out or quit.");
                 break;
             case EmployeePolicy.FakeWellnessProgram:
                 if (sb.Length > 0) sb.Append(" ");
-                sb.Append("Fake Wellness Program: Simuliere Mitarbeiterfürsorge ohne echte Leistungen.");
+                sb.Append("Fake Wellness: Throw beanbags in the breakroom and call it mental health support. PR counts more than well-being.");
                 break;
             case EmployeePolicy.CultureOfFear:
                 if (sb.Length > 0) sb.Append(" ");
-                sb.Append("Culture of Fear: Einschüchterung statt echter Motivation.");
+                sb.Append("Fear Culture: Manage through intimidation, not inspiration.");
                 break;
             case EmployeePolicy.PyramidReferrals:
                 if (sb.Length > 0) sb.Append(" ");
-                sb.Append("Pyramid Referrals: Belohne Mitarbeiter dafür, neue Mitarbeiter anzuwerben.");
+                sb.Append("Employee Pyramid: Incentivize hiring friends of friends. Eventually someone works for free?");
                 break;
         }
 

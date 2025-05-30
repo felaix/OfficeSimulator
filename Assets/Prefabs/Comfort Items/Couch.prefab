@@ -233,7 +233,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &2353621491991807901
 MonoBehaviour:
@@ -248,6 +248,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actions: 0400000005000000
+  bugPrefab: {fileID: 0}
+  bugContainer: {fileID: 0}
 --- !u!1 &3073631293917314701
 GameObject:
   m_ObjectHideFlags: 0

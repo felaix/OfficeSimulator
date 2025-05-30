@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d576427597cc6b14d95d054145646835, type: 3}
+  m_Name: Plant 2
+  m_EditorClassIdentifier: 
+  itemName: Plant 2
+  currentLevel: 0
+  maxLevel: 0
+  cost: 255
+  upgradeIcon: {fileID: 21300000, guid: 8cae9061a85ff9742adb6c095dfd5aba, type: 3}
+  description: Plant 2
+  itemObj: {fileID: 3501562275814232282, guid: f4c65f5d715143f468c7dcdee1afb0ac, type: 3}
+  comfort: 1
