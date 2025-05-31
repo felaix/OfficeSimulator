@@ -246,10 +246,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slides:
   - {fileID: 407340529}
+  - {fileID: 407340529}
   - {fileID: 257361468}
   - {fileID: 1362275786}
+  - {fileID: 257361468}
   - {fileID: 1742482243}
+  - {fileID: 257361468}
+  - {fileID: 407340529}
   - {fileID: 504233961}
+  - {fileID: 407340529}
 --- !u!114 &44564088
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -662,7 +667,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 257361468}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -1440,7 +1445,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1362275786}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -2104,10 +2109,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'All they asked was for me to work hard...
-
-    and everything would be
-    fine.'
+  m_text: Ready?
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 13abb9ab01103ec42b436d74874448fa, type: 2}
   m_sharedMaterial: {fileID: -3965416214015243675, guid: 13abb9ab01103ec42b436d74874448fa,

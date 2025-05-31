@@ -17,11 +17,19 @@ public class IntroStoryboardInput : MonoBehaviour
     // Slide 0: Text only intro
     "Welcome to capitalism. Time to sell your soul for the system.",
 
+    "20 years ago...",
+
     // Slide 1: Hyped player first job
-    "YES! I finally got my first job!",
+    "(You) YES! I finally got my dreamjob!",
+
+    "After months of unpaid overtime, you realize, your boss is a narcissist.",
 
     // Slide 2: 10 years later
     "(20 years later...) Look at their empire. Meanwhile, I'm burnt out. I did everything for them.",
+
+    "This is what you wanted, right?",
+
+    "Right?",
 
     // Slide 3: Burnout player
     "I'm exhausted. Is this what freedom feels like? I can't even pay my own bills.",
@@ -141,7 +149,7 @@ public class IntroStoryboardInput : MonoBehaviour
         else
         {
             // Alle Slides durch, Szene laden
-            SceneManager.LoadScene("Office");
+            SceneManager.LoadScene("Office 1");
         }
     }
 
