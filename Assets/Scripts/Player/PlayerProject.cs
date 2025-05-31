@@ -64,7 +64,7 @@ public class PlayerProject : MonoBehaviour
             return;
 
         // Projekt-Fortschritt
-        _elapsedTime += _playerStats.Speed * MONTHLY_PROGRESS_MULTIPLIER;
+        _elapsedTime += _playerStats.Speed;
         float progressNormalized = Mathf.Clamp01(_elapsedTime / MaxTime);
         UpdateUI(progressNormalized);
 

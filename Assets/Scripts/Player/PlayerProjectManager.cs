@@ -6,14 +6,34 @@ public class PlayerProjectManager : MonoBehaviour
 {
     public static PlayerProjectManager Instance { get; private set; }
 
-    [Header("Projekt-Prefab & Strategy")]
+    [Header("Project Setup")]
     [SerializeField] private GameObject playerProjectPrefab;
+    [SerializeField] private Transform defaultParentContainer;
 
-    // Wird dynamisch von den Buttons gefüllt
+    [Header("Project Names")]
+    [SerializeField]
+    private string[] defaultProjectNames = {
+        "Exploitation Simulator",
+        "Virtual Grind",
+        "Soul Extraction",
+        "Wage Slave Tycoon",
+        "Profit Over People",
+        "Burnout Factory",
+        "Corporate Dystopia",
+        "The Rat Race"
+    };
+
+    [Header("Debug")]
+    [SerializeField] private bool verboseLogging = false;
+
+    // Current strategy selected in UI
     [HideInInspector] public PlayerProjectStrategy selectedStrategy;
 
-    [HideInInspector] public List<PlayerProject> createdProjects = new List<PlayerProject>();
+    // All created projects
+    private List<PlayerProject> _createdProjects = new List<PlayerProject>();
     private Stats _playerStats;
+
+    public IReadOnlyList<PlayerProject> CreatedProjects => _createdProjects;
 
     private void Awake()
     {
@@ -28,77 +48,116 @@ public class PlayerProjectManager : MonoBehaviour
     private void Start()
     {
         _playerStats = PlayerInventory.Instance?.PlayerStats;
-        if (_playerStats == null)
-            Debug.LogError("PlayerStats nicht gefunden!");
+        if (_playerStats == null && verboseLogging)
+        {
+            Debug.LogWarning("PlayerStats not found - projects will have no stat effects");
+        }
     }
 
-    /// <summary>
-    /// Gibt PlayerStats zurück (für Projekt-Init).
-    /// </summary>
-    public Stats GetPlayerStats() => _playerStats;
+    public void CreateNewPlayerProject()
+    {
+        if (defaultParentContainer == null)
+        {
+            defaultParentContainer = transform;
+            if (verboseLogging) Debug.Log("Using manager transform as default container");
+        }
 
-    /// <summary>
-    /// Erstellt ein neues Projekt-GameObject unter parentContainer,
-    /// basierend auf der bereits in selectedStrategy gesetzten Strategy.
-    /// </summary>
-    public void CreateNewPlayerProject(Transform parentContainer)
+        CreateProjectAt(defaultParentContainer);
+    }
+
+    public void CreateProjectAt(Transform parentContainer)
+    {
+        // Validate inputs
+        if (!ValidateCreationParameters(parentContainer))
+            return;
+
+        // Ensure we have a title
+        if (string.IsNullOrWhiteSpace(selectedStrategy.ProjectTitle))
+        {
+            selectedStrategy.ProjectTitle = GenerateProjectName();
+            if (verboseLogging) Debug.Log($"Generated project name: {selectedStrategy.ProjectTitle}");
+        }
+
+        // Create the project object
+        var newProject = InstantiateProject(parentContainer);
+        if (newProject == null) return;
+
+        // Initialize and track
+        newProject.Initialize(
+            id: _createdProjects.Count,
+            strategy: selectedStrategy,
+            playerStats: _playerStats
+        );
+
+        _createdProjects.Add(newProject);
+        PostCreationCleanup();
+
+        if (verboseLogging) Debug.Log($"Created new project: {selectedStrategy.ProjectTitle}");
+    }
+
+    private bool ValidateCreationParameters(Transform parentContainer)
     {
         if (parentContainer == null)
         {
-            Debug.LogError("UI-Container ist null!");
-            return;
+            Debug.LogError("Cannot create project - no parent container specified");
+            return false;
         }
 
         if (selectedStrategy == null)
         {
-            Debug.LogError("selectedStrategy ist null!");
-            return;
+            Debug.LogError("Cannot create project - no strategy selected");
+            return false;
         }
 
-        // Diese Prüfungen machen die ConfirmCreateProjectButton bereits, 
-        // aber zur Sicherheit nochmal:
         if (selectedStrategy.Type == ProjectType.None)
         {
-            Debug.LogError("Kein Projekttyp gewählt!");
-            return;
-        }
-        if (selectedStrategy.Marketing == MarketingStrategy.None)
-            Debug.LogWarning("Keine Marketing-Strategie gewählt!");
-        if (selectedStrategy.Policy == EmployeePolicy.None)
-            Debug.LogWarning("Keine Mitarbeiter-Policy gewählt!");
-
-        // Title & Description endgültig setzen (kann überschrieben werden, wenn Spieler noch editiert)
-        selectedStrategy.ProjectTitle = selectedStrategy.ProjectTitle == ""
-            ? "New Project"
-            : selectedStrategy.ProjectTitle;
-
-        selectedStrategy.GenerateDescription();
-
-        // Instantiate Prefab
-        var go = Instantiate(playerProjectPrefab, parentContainer);
-        var proj = go.GetComponent<PlayerProject>();
-        if (proj == null)
-        {
-            Debug.LogError("Prefab hat kein PlayerProject-Skript!");
-            Destroy(go);
-            return;
+            Debug.LogError("Cannot create project - no project type selected");
+            return false;
         }
 
-        // Init mit ID, Strategy und PlayerStats
-        proj.Initialize(createdProjects.Count, selectedStrategy, _playerStats, Random.Range(2, 5));
-        createdProjects.Add(proj);
+        return true;
     }
 
-    /// <summary>
-    /// Hilfsmethode, um anhand einer ID das Projekt zu bekommen.
-    /// </summary>
-    public PlayerProject GetPlayerProjectByID(int id)
+    private string GenerateProjectName()
     {
-        if (id < 0 || id >= createdProjects.Count)
+        return defaultProjectNames[Random.Range(0, defaultProjectNames.Length)];
+    }
+
+    private PlayerProject InstantiateProject(Transform parent)
+    {
+        var projectGO = Instantiate(playerProjectPrefab, parent);
+        var project = projectGO.GetComponent<PlayerProject>();
+
+        if (project == null)
         {
-            Debug.LogError($"Ungültige Projekt-ID: {id}");
+            Debug.LogError("Project prefab missing PlayerProject component!");
+            Destroy(projectGO);
             return null;
         }
-        return createdProjects[id];
+
+        return project;
+    }
+
+    private void PostCreationCleanup()
+    {
+        // Clear UI selections
+        if (PlayerProjectUI.Instance != null)
+        {
+            PlayerProjectUI.Instance.ClearAllSelections();
+            PlayerProjectUI.Instance.ToggleCreateWindow(false);
+        }
+
+        // Reset for next creation
+        selectedStrategy = null;
+    }
+
+    public PlayerProject GetProjectByID(int id)
+    {
+        if (id < 0 || id >= _createdProjects.Count)
+        {
+            Debug.LogError($"Invalid project ID: {id}");
+            return null;
+        }
+        return _createdProjects[id];
     }
 }

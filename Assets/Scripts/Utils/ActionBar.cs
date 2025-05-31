@@ -58,6 +58,9 @@ public class ActionBar : MonoBehaviour
         int projectID = TryGetComponent<PlayerProject>(out var proj) ? proj.ID : -1;
         canvas.CreateActionBar();
 
+        Computer com = GetComponent<Computer>();
+        if (com != null) { com.ToggleProgressUI(); }
+
         foreach (var action in actions)
         {
             switch (action)
@@ -78,15 +81,7 @@ public class ActionBar : MonoBehaviour
                     }
                     CreateButton(canvas, "Fix Bugs", () =>
                     {
-                        var p = projectManager.GetPlayerProjectByID(projectID);
-                        if (p != null)
-                        {
-                            //projectUI.ShowBugs(p, bugPrefab, bugContainer);
-                        }
-                        else
-                        {
-                            Debug.LogError($"Projekt {projectID} nicht gefunden.");
-                        }
+                        Debug.Log("nix zum fixen.");
                     });
                     break;
 

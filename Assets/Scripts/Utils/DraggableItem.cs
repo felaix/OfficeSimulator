@@ -14,7 +14,6 @@ public class DraggableItem : MonoBehaviour
 
     private bool isDragging = false;
     private bool isHovered = false;
-
     private PlayerInputActions input;
 
     private void Awake()

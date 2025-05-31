@@ -72,7 +72,6 @@ public class ConfirmCreateProjectButton : MonoBehaviour
         {
             Debug.LogError("Kein Projekttyp gewählt!");
             _ui.UpdateProjectTypeDescription(ProjectType.None);
-            return;
         }
 
         // 5) Validierung: Marketing
@@ -80,7 +79,6 @@ public class ConfirmCreateProjectButton : MonoBehaviour
         {
             Debug.LogError("Keine Marketing-Strategie gewählt!");
             _ui.UpdateMarketingDescription(MarketingStrategy.None);
-            return;
         }
 
         // 6) Validierung: Policy
@@ -88,7 +86,6 @@ public class ConfirmCreateProjectButton : MonoBehaviour
         {
             Debug.LogError("Keine Mitarbeiter-Policy gewählt!");
             _ui.UpdatePolicyDescription(EmployeePolicy.None);
-            return;
         }
 
         // 7) Validierung: Titel darf nicht leer sein
@@ -96,7 +93,6 @@ public class ConfirmCreateProjectButton : MonoBehaviour
         if (string.IsNullOrEmpty(enteredTitle))
         {
             Debug.LogError("Bitte gib einen Titel für das Projekt ein!");
-            return;
         }
 
         // 8) Animation starten (nur, wenn dieses GameObject noch aktiv ist)
@@ -111,7 +107,7 @@ public class ConfirmCreateProjectButton : MonoBehaviour
         strat.GenerateDescription();
 
         // 10) Projekt tatsächlich erstellen
-        _manager.CreateNewPlayerProject(projectContainerTransform);
+        _manager.CreateNewPlayerProject();
 
         // 11) Create-Fenster schließen und Strategy/Texte zurücksetzen
         _ui.ToggleCreateWindow(false);

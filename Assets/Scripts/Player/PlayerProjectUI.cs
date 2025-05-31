@@ -5,7 +5,7 @@ public class PlayerProjectUI : MonoBehaviour
 {
     public static PlayerProjectUI Instance { get; private set; }
 
-    [Header("Fenster & Container")]
+    [Header("Windows & Containers")]
     [SerializeField] private Transform createProjectWindow;
     [SerializeField] private Transform projectContainer;
     [SerializeField] private TMP_Text descriptionTMP;
@@ -41,8 +41,8 @@ public class PlayerProjectUI : MonoBehaviour
         _selectedMarketingIcon = null;
         _selectedPolicyIcon = null;
 
-        descriptionTMP.text = "";
-        titleInput.text = ""; // Titelfeld ebenfalls zurücksetzen
+        descriptionTMP.text = "Select your tools of exploitation";
+        titleInput.text = "";
     }
 
     public void UpdateFullDescription(string newDesc)
@@ -50,25 +50,24 @@ public class PlayerProjectUI : MonoBehaviour
         descriptionTMP.text = newDesc;
     }
 
-    // Live-Updates: siehe vorherige Version
     public void UpdateProjectTypeDescription(ProjectType type)
     {
         switch (type)
         {
             case ProjectType.TrashGame:
-                descriptionTMP.text = "Trash Game: Schnelles Spiel mit fragwürdiger Qualität.";
+                descriptionTMP.text = "Trash Game: Pump out low-effort garbage. Monetize disappointment.";
                 break;
             case ProjectType.FakeSocialMedia:
-                descriptionTMP.text = "Fake Social Media: Sammle Nutzerdaten unter falscher Flagge.";
+                descriptionTMP.text = "Fake Social Media: Farm user data while pretending to connect people.";
                 break;
             case ProjectType.FakeOnlineShop:
-                descriptionTMP.text = "Fake Online Shop: Täusche Kunden mit nicht existierenden Produkten.";
+                descriptionTMP.text = "Fake Online Shop: Take payments for products that will never ship.";
                 break;
             case ProjectType.MailScam:
-                descriptionTMP.text = "Mail Scam: Erstelle Phishing-Mails und betrüge ahnungslose Nutzer.";
+                descriptionTMP.text = "Mail Scam: Target the vulnerable with too-good-to-be-true offers.";
                 break;
             default:
-                descriptionTMP.text = "Wähle zuerst einen Projekttyp.";
+                descriptionTMP.text = "Choose your flavor of exploitation";
                 break;
         }
     }
@@ -78,25 +77,25 @@ public class PlayerProjectUI : MonoBehaviour
         switch (marketing)
         {
             case MarketingStrategy.BlockchainIntegration:
-                descriptionTMP.text = "Blockchain Integration: Täusche Innovation mit leerem Buzzword-Hype.";
+                descriptionTMP.text = "Blockchain Hype: Add meaningless tech jargon to inflate perceived value.";
                 break;
             case MarketingStrategy.NFT:
-                descriptionTMP.text = "NFT: Verkaufe nutzlose Pixel als Sammlerstücke.";
+                descriptionTMP.text = "NFT Scheme: Sell artificial scarcity for digital trinkets.";
                 break;
             case MarketingStrategy.Pay2Win:
-                descriptionTMP.text = "Pay2Win: Zahle, um im Spiel zu gewinnen.";
+                descriptionTMP.text = "Pay2Win: Lock basic functionality behind endless payments.";
                 break;
             case MarketingStrategy.DataHarvesting:
-                descriptionTMP.text = "Data Harvesting: Verkaufe Nutzerdaten weiter.";
+                descriptionTMP.text = "Data Harvesting: Package and sell user privacy to the highest bidder.";
                 break;
             case MarketingStrategy.ReferralPyramidSystem:
-                descriptionTMP.text = "Referral Pyramid System: Locke Nutzer mit Versprechen von hohen Gewinnen.";
+                descriptionTMP.text = "Pyramid Scheme: Profit from recruiting new victims into the system.";
                 break;
             case MarketingStrategy.FakeReviews:
-                descriptionTMP.text = "Fake Reviews: Bestich Influencer für glattgebügelte Bewertungen.";
+                descriptionTMP.text = "Fake Reviews: Manufacture false praise to hide poor quality.";
                 break;
             default:
-                descriptionTMP.text = "Wähle zuerst eine Marketing-Strategie.";
+                descriptionTMP.text = "Choose how you'll manipulate the masses";
                 break;
         }
     }
@@ -106,25 +105,25 @@ public class PlayerProjectUI : MonoBehaviour
         switch (policy)
         {
             case EmployeePolicy.CheapFreelancer:
-                descriptionTMP.text = "Cheap Freelancer: Leih dir Billigarbeitskräfte aus aller Welt.";
+                descriptionTMP.text = "Cheap Freelancers: Exploit global wage disparities for maximum profit.";
                 break;
             case EmployeePolicy.UnpaidInterns:
-                descriptionTMP.text = "Unpaid Interns: Niemand zahlt mehr – Praktikanten schuften gratis.";
+                descriptionTMP.text = "Unpaid Interns: Extract labor while calling it 'opportunity'.";
                 break;
             case EmployeePolicy.CrunchTime:
-                descriptionTMP.text = "Crunch Time: Team muss Tag und Nacht durcharbeiten.";
+                descriptionTMP.text = "Crunch Culture: Burn out workers to meet artificial deadlines.";
                 break;
             case EmployeePolicy.FakeWellnessProgram:
-                descriptionTMP.text = "Fake Wellness Program: Stelle Gym-Sessions auf, aber keiner darf hingehen.";
+                descriptionTMP.text = "Fake Wellness: Offer token benefits nobody has time to use.";
                 break;
             case EmployeePolicy.CultureOfFear:
-                descriptionTMP.text = "Culture of Fear: Bedrohungsszenarien, damit niemand kündigt.";
+                descriptionTMP.text = "Fear Culture: Keep workers compliant through constant insecurity.";
                 break;
             case EmployeePolicy.PyramidReferrals:
-                descriptionTMP.text = "Pyramid Referrals: Zahl den Leuten, die neue Leute rekrutieren.";
+                descriptionTMP.text = "Recruitment Pyramid: Pay employees to find their own replacements.";
                 break;
             default:
-                descriptionTMP.text = "Wähle zuerst eine Mitarbeiter-Policy.";
+                descriptionTMP.text = "Choose how you'll exploit your workforce";
                 break;
         }
     }
@@ -164,11 +163,9 @@ public class PlayerProjectUI : MonoBehaviour
     public void ToggleCreateWindow(bool isVisible)
     {
         createProjectWindow.gameObject.SetActive(isVisible);
+        if (isVisible) ClearAllSelections();
     }
 
-    /// <summary>
-    /// Getter, um den aktuell im InputField eingegebenen Titel abzurufen.
-    /// </summary>
     public string GetEnteredTitle()
     {
         return titleInput.text.Trim();
